@@ -65,6 +65,13 @@ FROM "Количество_Деталей" AS a
 WHERE d."Город" IN (SELECT MIN(c."Город")
                     FROM "Проекты_j" AS c);
 
+-- 17 --
+SELECT a."Д", a."ПР", SUM(CAST(a.s AS INTEGER))
+FROM "Количество_Деталей" AS a
+GROUP BY a."Д", a."ПР";
+
+
+
 
 
 -- Вариант 12 --
@@ -96,11 +103,11 @@ FROM "Количество_Деталей" AS a
 WHERE a."ПР" = 'ПР1';
 
 -- 8 -- not solved
-SELECT DISTINCT ON (b."Город", c."Город", d."Город") a."П", a."Д", a."ПР", b."Город", c."Город", d."Город"
-FROM "Количество_Деталей" AS a,
-     "Поставщики_s" AS b,
-     "Детали_p" AS c,
-     "Проекты_j" as d;
+SELECT DISTINCT a."П", a."Д", a."ПР"
+FROM "Количество_Деталей" AS a
+         INNER JOIN "Поставщики_s" AS b ON a."П" = b."П"
+         INNER JOIN "Детали_p" AS c ON a."Д" = c."Д"
+         INNER JOIN "Проекты_j" AS d ON a."ПР" = d."ПР";
 
 -- 12 --
 SELECT a."Д"
@@ -121,14 +128,21 @@ WHERE b."Д" IN (SELECT a."Д"
                 FROM "Количество_Деталей" AS a
                 WHERE a."П" = 'П1');
 
--- 26 -- not solved
-SELECT AVG(CAST(a.s AS INTEGER))
-FROM "Количество_Деталей" AS a
-WHERE a."Д" = 'Д1';
+-- 26 --
+SELECT b."ПР"
+FROM "Количество_Деталей" AS b,
+     (SELECT a."ПР", AVG(CAST(a.s AS INTEGER)) AS average
+      FROM "Количество_Деталей" AS a
+      WHERE a."Д" = 'Д1'
+      GROUP BY a."ПР") AS q1,
+     (SELECT MAX(CAST(a.s AS INTEGER)) AS maximum
+      FROM "Количество_Деталей" AS a
+      WHERE a."ПР" = 'ПР1') AS q2
+WHERE q1.average > q2.maximum;
 
-SELECT a."ПР"
+-- 18 --
+SELECT a."Д", a."ПР",  AVG(CAST(a.s AS INTEGER))
 FROM "Количество_Деталей" AS a
-WHERE a."Д" = 'Д1'
-  AND AVG(CAST(a.s AS INTEGER)) > (SELECT MAX(CAST(b.s AS INTEGER))
-                                   FROM "Количество_Деталей" AS b
-                                   WHERE b."ПР" = 'ПР1');
+GROUP BY a."Д", a."ПР";
+
+
