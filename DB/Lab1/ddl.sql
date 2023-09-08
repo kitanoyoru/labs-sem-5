@@ -9,37 +9,37 @@ CREATE TYPE СпециальностьEnum AS ENUM ('АСОИ', 'ЭВМ', 'СД'
 CREATE TABLE ПРЕПОДАВАТЕЛЬ
 (
     ЛичныйНомер     VARCHAR(4) PRIMARY KEY,
-    Фамилия         VARCHAR(10) NOT NULL,
-    Должность       ДолжностьEnum NOT NULL,
-    Кафедра         КафедраEnum NOT NULL,
+    Фамилия         VARCHAR(10)         NOT NULL,
+    Должность       ДолжностьEnum       NOT NULL,
+    Кафедра         КафедраEnum         NOT NULL,
     Специальность   СпециальностьEnum[] NOT NULL,
-    ТелефонДомашний VARCHAR(3) NOT NULL
+    ТелефонДомашний VARCHAR(3)          NOT NULL
 );
 
 CREATE TABLE ПРЕДМЕТ
 (
     КодовыйНомерПредмета VARCHAR(3) PRIMARY KEY,
-    НазваниеПредмета     VARCHAR(10) NOT NULL,
-    КоличествоЧасов      SMALLSERIAL NOT NULL,
+    НазваниеПредмета     VARCHAR(10)       NOT NULL,
+    КоличествоЧасов      SMALLSERIAL       NOT NULL,
     Специальность        СпециальностьEnum NOT NULL,
-    Семестр              SMALLSERIAL NOT NULL
+    Семестр              SMALLSERIAL       NOT NULL
 );
 
 
 CREATE TABLE СТУДЕНЧЕСКАЯ_ГРУППА
 (
     КодовыйНомерГруппы VARCHAR(4) PRIMARY KEY,
-    НазваниеГруппы     VARCHAR(5) NOT NULL,
-    КоличествоЧеловек  SERIAL NOT NULL,
+    НазваниеГруппы     VARCHAR(5)        NOT NULL,
+    КоличествоЧеловек  SERIAL            NOT NULL,
     Специальность      СпециальностьEnum NOT NULL,
-    ФамилияСтаросты    VARCHAR(10) NOT NULL
+    ФамилияСтаросты    VARCHAR(10)       NOT NULL
 );
 
 CREATE TABLE ПРЕПОДАВАТЕЛЬ_ПРЕПОДАЕТ_ПРЕДМЕТЫ_В_ГРУППАХ
 (
-    КодовыйНомерГруппы   VARCHAR(4) NOT NULL,
-    КодовыйНомерПредмета VARCHAR(3) NOT NULL,
-    ЛичныйНомер          VARCHAR(4) NOT NULL,
+    КодовыйНомерГруппы   VARCHAR(4)  NOT NULL,
+    КодовыйНомерПредмета VARCHAR(3)  NOT NULL,
+    ЛичныйНомер          VARCHAR(4)  NOT NULL,
     НомерАудитории       SMALLSERIAL NOT NULL,
 
     PRIMARY KEY (КодовыйНомерГруппы, КодовыйНомерПредмета, ЛичныйНомер),
@@ -117,26 +117,26 @@ CREATE TABLE Поставщики_S
     П      VARCHAR(2) PRIMARY KEY,
     ИмяП   VARCHAR(10) NOT NULL,
     Статус SMALLSERIAL NOT NULL,
-    Город  ГородEnum NOT NULL
+    Город  ГородEnum   NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION check_primary_key_for_Поставщики_S()
-  RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
-  IF NEW.П !~ '^П' THEN
-    RAISE EXCEPTION 'Primary key must start with letter П!';
-  END IF;
+    IF NEW.П !~ '^П' THEN
+        RAISE EXCEPTION 'Primary key must start with letter П!';
+    END IF;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_primary_key_trigger_Поставщики_S
-  BEFORE INSERT ON Поставщики_S
-  FOR EACH ROW
-  EXECUTE FUNCTION check_primary_key_for_Поставщики_S();
-
-
+    BEFORE INSERT
+    ON Поставщики_S
+    FOR EACH ROW
+EXECUTE FUNCTION check_primary_key_for_Поставщики_S();
 
 
 
@@ -144,26 +144,27 @@ CREATE TABLE Детали_P
 (
     Д      VARCHAR(2) PRIMARY KEY,
     ИмяД   VARCHAR(10) NOT NULL,
-    Цвет   ЦветEnum NOT NULL,
+    Цвет   ЦветEnum    NOT NULL,
     Размер SMALLSERIAL NOT NULL,
     Город  ГородEnum
 );
 CREATE OR REPLACE FUNCTION check_primary_key_for_Детали_P()
-  RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
-  IF NEW.Д !~ '^Д' THEN
-    RAISE EXCEPTION 'Primary key must start with letter П!';
-  END IF;
+    IF NEW.Д !~ '^Д' THEN
+        RAISE EXCEPTION 'Primary key must start with letter П!';
+    END IF;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_primary_key_trigger_Детали_P
-  BEFORE INSERT ON Детали_P
-  FOR EACH ROW
-  EXECUTE FUNCTION check_primary_key_for_Детали_P();
-
+    BEFORE INSERT
+    ON Детали_P
+    FOR EACH ROW
+EXECUTE FUNCTION check_primary_key_for_Детали_P();
 
 
 
@@ -171,23 +172,25 @@ CREATE TABLE Проекты_J
 (
     ПР    VARCHAR(50) PRIMARY KEY,
     ИмяПР VARCHAR(4) NOT NULL,
-    Город ГородEnum NOT NULL
+    Город ГородEnum  NOT NULL
 );
 CREATE OR REPLACE FUNCTION check_primary_key_for_Проекты_J()
-  RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
-  IF NEW.ПР !~ '^ПР' THEN
-    RAISE EXCEPTION 'Primary key must start with letter ПР!';
-  END IF;
+    IF NEW.ПР !~ '^ПР' THEN
+        RAISE EXCEPTION 'Primary key must start with letter ПР!';
+    END IF;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_primary_key_trigger_Проекты_J
-  BEFORE INSERT ON Проекты_J
-  FOR EACH ROW
-  EXECUTE FUNCTION check_primary_key_for_Проекты_J();
+    BEFORE INSERT
+    ON Проекты_J
+    FOR EACH ROW
+EXECUTE FUNCTION check_primary_key_for_Проекты_J();
 
 
 
@@ -258,4 +261,5 @@ VALUES ('П2', 'Д3', 'ПР3', '200'),
        ('П5', 'Д5', 'ПР4', '400'),
        ('П5', 'Д6', 'ПР4', '500');
 COMMIT;
+
 
