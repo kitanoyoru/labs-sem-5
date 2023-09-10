@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "lab1"
+version = "0.1.0"
+description = ""
+authors = ["Alexandr Rutkowski <kitanoyoru@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.287"
+black = "^23.9.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
