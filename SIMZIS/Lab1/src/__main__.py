@@ -1,7 +1,6 @@
 import random
 import itertools
 
-from utils import log_time_decorator
 from contants import ALPHABET
 
 
@@ -10,7 +9,7 @@ def generate_random_password(length: int) -> str:
     return generated_string
 
 
-@log_time_decorator
+# @log_time_decorator
 def password_selection(target_password: str):
     for length in range(1, len(ALPHABET) + 1):
         for guess in itertools.product(ALPHABET, repeat=length):
