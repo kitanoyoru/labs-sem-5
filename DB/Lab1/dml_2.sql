@@ -54,12 +54,17 @@ WHERE "П" = 'П1';
 
 -- 32 --
 
-SELECT DISTINCT b."ПР"
-FROM "Количество_Деталей" AS b
-WHERE EXISTS (SELECT 1
-              FROM "Количество_Деталей" AS a
-              WHERE a."П" = 'П2'
-                AND b."Д" = a."Д");
+WITH temp AS (
+    SELECT ARRAY_AGG(DISTINCT b."Д") AS v
+    FROM "Количество_Деталей" AS b
+    WHERE b."П" = 'П1'
+)
+
+SELECT a."ПР"
+FROM "Количество_Деталей" AS a
+GROUP BY a."ПР"
+HAVING ARRAY_AGG(a."Д") @> (SELECT v FROM temp)
+ORDER BY a."ПР";
 
 -- 26 --
 
