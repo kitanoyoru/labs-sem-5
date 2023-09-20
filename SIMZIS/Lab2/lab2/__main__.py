@@ -5,7 +5,7 @@ import math
 
 ALPHABET = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 
-PASSWORD_LENGTH = 10
+PASSWORD_LENGTH = 20
 
 ROWS = 4
 COLS = 5
