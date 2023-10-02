@@ -5,10 +5,10 @@ import math
 
 ALPHABET = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 
-PASSWORD_LENGTH = 20
+PASSWORD_LENGTH = 4
 
-ROWS = 4
-COLS = 5
+ROWS = 2
+COLS = 2
 
 def generate_random_text(alphabet, length):
     generated_string = "".join(random.choice(alphabet) for _ in range(length))

@@ -1,0 +1,38 @@
+# Python
+**/__pycache__
+.ruff_cache
+.python-version
+*.pyc
+*.pyo
+dist
+.pytest_cache
+
+# Local data
+sammelrepository/.pytest_cache/
+tests/data/sources.json
+
+# Flask
+instance/
+.webassets-cache
+
+# Environments
+/.venv/
+.env.sh
+.env
+sources.json
+access_tokens.json
+
+# IDEs
+.vscode/
+.history/
+.idea/
+
+# MacOS
+**/.DS_Store
+
+# Other
+./gitlab-ci-local
+node_modules/
+package.json
+package-lock.json
+
