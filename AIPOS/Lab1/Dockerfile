@@ -13,8 +13,6 @@ ENV PYTHONUNBUFFERED=1 \
 
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
-
-
 FROM python-base AS builder-base
 
 RUN buildDeps="build-essential" \
@@ -34,8 +32,6 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} pyt
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml ./
 RUN poetry install --only main
-
-
 
 FROM python-base as development
 
@@ -58,23 +54,18 @@ ENTRYPOINT /docker-entrypoint.sh $0 $@
 
 CMD ["uvicorn", "--reload", "--host=0.0.0.0", "--factory", "--log-config=./config/log_conf.yaml", "src.main:create_app"]
 
-
-
 FROM development AS lint
 
-RUN black --config ./pyproject.toml --check app tests
-RUN isort --settings-path ./pyproject.toml --recursive --check-only
+RUN black --config ./pyproject.toml --check src tests
+RUN isort --settings-path ./pyproject.toml --check-only src tests
 
 CMD ["tail", "-f", "/dev/null"]
 
-
-
 FROM development AS test
 
-RUN coverage run --rcfile ./pyproject.toml -m pytest ./tests
-RUN coverage report --fail-under 50
-
-
+RUN poetry run pytest
+#RUN coverage run --rcfile ./pyproject.toml -m pytest ./tests
+#RUN coverage report --fail-under 50
 
 FROM python-base AS production
 
@@ -90,7 +81,7 @@ RUN chmod +x /docker-entrypoint.sh
 RUN groupadd -g 1500 poetry && \
     useradd -m -u 1500 -g poetry poetry
 
-COPY --chown=poetry:poetry ./app /app
+COPY --chown=poetry:poetry ./src /app
 
 USER poetry
 WORKDIR /app

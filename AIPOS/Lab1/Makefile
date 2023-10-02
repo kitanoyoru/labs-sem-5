@@ -44,4 +44,4 @@ coverage:
 
 
 docker-prod:
-	DOCKER_BUILDKIT=0 docker build -t poetry-project  --no-cache .
+	DOCKER_BUILDKIT=0 docker build -t poetry-project .
