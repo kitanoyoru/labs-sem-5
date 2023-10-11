@@ -1,0 +1,10 @@
+{
+  "name": "Lab1-js",
+  "packageManager": "yarn@3.6.3",
+  "dependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+    "tests": "jest"
+  }
+}
