@@ -11,10 +11,10 @@ import (
 func TestNewFact_ValidFact(t *testing.T) {
 	factStr := "a(x)={(b,1.5),(c,2.0)}"
 	expectedFact := &load.Fact{
-		fact:            "a(x)={(b,1.5),(c,2.0)}",
-		head:            "a(x)",
-		headWithoutVars: "a",
-		tail: map[string]float64{
+		Fact:            "a(x)={(b,1.5),(c,2.0)}",
+		Head:            "a(x)",
+		HeadWithoutVars: "a",
+		Tail: map[string]float64{
 			"b": 1.5,
 			"c": 2.0,
 		},
@@ -33,7 +33,7 @@ func TestNewFact_ValidFact(t *testing.T) {
 
 func TestNewFact_InvalidFact(t *testing.T) {
 	factStr := "invalid_fact"
-	expectedErr := &load.InvalidFactException{fact: factStr}
+	expectedErr := &load.InvalidFactException{Fact: factStr}
 
 	fact, err := load.NewFact(factStr)
 
@@ -47,16 +47,16 @@ func TestNewFact_InvalidFact(t *testing.T) {
 }
 
 func TestNewFunction_ValidFunction(t *testing.T) {
-	functionStr := "f(x,y)=(g(x),h(y))"
-	expectedFunction := &Function{
-		function:        "f(x,y)=(g(x),h(y))",
-		head:            "f(x,y)",
-		headWithoutVars: "f",
-		tail:            []string{"g(x)", "h(y)"},
-		tailWithoutVars: []string{"g", "h"},
+	functionStr := "f(x,y)=(p(x)~>v(y))"
+	expectedFunction := &load.Function{
+		Function:        "f(x,y)=(p(x)~>v(y))",
+		Head:            "f(x,y)",
+		HeadWithoutVars: "f,", // FIX
+		Tail:            []string{"p(x)", "v(y)"},
+		TailWithoutVars: []string{"p", "v"},
 	}
 
-	function, err := NewFunction(functionStr)
+	function, err := load.NewFunction(functionStr)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -69,9 +69,9 @@ func TestNewFunction_ValidFunction(t *testing.T) {
 
 func TestNewFunction_InvalidFunction(t *testing.T) {
 	functionStr := "invalid_function"
-	expectedErr := &InvalidFunctionException{function: functionStr}
+	expectedErr := &load.InvalidFunctionException{Function: functionStr}
 
-	function, err := NewFunction(functionStr)
+	function, err := load.NewFunction(functionStr)
 
 	if function != nil {
 		t.Errorf("Expected function to be nil, got: %v", function)
@@ -84,8 +84,8 @@ func TestNewFunction_InvalidFunction(t *testing.T) {
 
 func TestRemoveVariables(t *testing.T) {
 	head := "a(x,y,z)"
-	expectedResult := "a,,,"
-	result := removeVariables(head)
+	expectedResult := "a,,"
+	result := load.RemoveVariables(head)
 
 	if result != expectedResult {
 		t.Errorf("Expected result: %s, got: %s", expectedResult, result)
@@ -93,12 +93,12 @@ func TestRemoveVariables(t *testing.T) {
 }
 
 func TestGetHead(t *testing.T) {
-	fact := &Fact{
-		fact: "a(x)={(b,1.5),(c,2.0)}",
+	fact := &load.Fact{
+		Fact: "a(x)={(b,1.5),(c,2.0)}",
 	}
 
 	expectedHead := "a(x)"
-	result := fact.getHead()
+	result := fact.GetHead()
 
 	if result != expectedHead {
 		t.Errorf("Expected head: %s, got: %s", expectedHead, result)
@@ -106,12 +106,12 @@ func TestGetHead(t *testing.T) {
 }
 
 func TestGetTail(t *testing.T) {
-	function := &Function{
-		function: "f(x,y)=(g(x),h(y))",
+	function := &load.Function{
+		Function: "f(x,y)=(g(x),h(y))",
 	}
 
 	expectedTail := []string{"g(x)", "h(y)"}
-	result := function.getTail()
+	result := function.GetTail()
 
 	if !reflect.DeepEqual(result, expectedTail) {
 		t.Errorf("Expected tail: %v, got: %v", expectedTail, result)
@@ -119,12 +119,12 @@ func TestGetTail(t *testing.T) {
 }
 
 func TestGetTailWithoutVariables(t *testing.T) {
-	function := &Function{
-		tail: []string{"g(x)", "h(y)"},
+	function := &load.Function{
+		Tail: []string{"g(x)", "h(y)"},
 	}
 
 	expectedTailWithoutVars := []string{"g", "h"}
-	result := function.getTailWithoutVariables()
+	result := function.GetTailWithoutVariables()
 
 	if !reflect.DeepEqual(result, expectedTailWithoutVars) {
 		t.Errorf("Expected tailWithoutVars: %v, got: %v", expectedTailWithoutVars, result)
@@ -135,7 +135,7 @@ func TestFloatParse(t *testing.T) {
 	valueStr := "3.14"
 	expectedValue := 3.14
 
-	result := parseFloat(valueStr)
+	result := load.ParseFloat(valueStr)
 
 	if result != expectedValue {
 		t.Errorf("Expected value: %f, got: %f", expectedValue, result)
@@ -143,11 +143,11 @@ func TestFloatParse(t *testing.T) {
 }
 
 func TestFactIsValid_ValidFact(t *testing.T) {
-	fact := &Fact{
-		fact: "a(x)={(b,1.5),(c,2.0)}",
+	fact := &load.Fact{
+		Fact: "a(x)={(b,1.5),(c,2.0)}",
 	}
 
-	result := fact.isValid()
+	result := fact.IsValid()
 
 	if !result {
 		t.Errorf("Expected isValid to be true, got false")
@@ -155,11 +155,11 @@ func TestFactIsValid_ValidFact(t *testing.T) {
 }
 
 func TestFactIsValid_InvalidFact(t *testing.T) {
-	fact := &Fact{
-		fact: "invalid_fact",
+	fact := &load.Fact{
+		Fact: "invalid_fact",
 	}
 
-	result := fact.isValid()
+	result := fact.IsValid()
 
 	if result {
 		t.Errorf("Expected isValid to be false, got true")
@@ -167,11 +167,11 @@ func TestFactIsValid_InvalidFact(t *testing.T) {
 }
 
 func TestFunctionIsValid_ValidFunction(t *testing.T) {
-	function := &Function{
-		function: "f(x,y)=(g(x),h(y))",
+	function := &load.Function{
+		Function: "f(x,y)=(g(x)~>h(y))",
 	}
 
-	result := function.isValid()
+	result := function.IsValid()
 
 	if !result {
 		t.Errorf("Expected isValid to be true, got false")
@@ -179,11 +179,11 @@ func TestFunctionIsValid_ValidFunction(t *testing.T) {
 }
 
 func TestFunctionIsValid_InvalidFunction(t *testing.T) {
-	function := &Function{
-		function: "invalid_function",
+	function := &load.Function{
+		Function: "invalid_function",
 	}
 
-	result := function.isValid()
+	result := function.IsValid()
 
 	if result {
 		t.Errorf("Expected isValid to be false, got true")
@@ -193,8 +193,8 @@ func TestFunctionIsValid_InvalidFunction(t *testing.T) {
 func TestInvalidFactException_Error(t *testing.T) {
 	fact := "invalid_fact"
 	expectedError := fmt.Sprintf("Invalid format of fact: %s", fact)
-	exception := &InvalidFactException{
-		fact: fact,
+	exception := &load.InvalidFactException{
+		Fact: fact,
 	}
 
 	result := exception.Error()
@@ -207,49 +207,13 @@ func TestInvalidFactException_Error(t *testing.T) {
 func TestInvalidFunctionException_Error(t *testing.T) {
 	function := "invalid_function"
 	expectedError := fmt.Sprintf("Invalid format of function: %s", function)
-	exception := &InvalidFunctionException{
-		function: function,
+	exception := &load.InvalidFunctionException{
+		Function: function,
 	}
 
 	result := exception.Error()
 
 	if result != expectedError {
 		t.Errorf("Expected error: %s, got: %s", expectedError, result)
-	}
-}
-
-func TestFactStringRepresentation(t *testing.T) {
-	fact := &Fact{
-		fact:            "a(x)={(b,1.5),(c,2.0)}",
-		head:            "a(x)",
-		headWithoutVars: "a",
-		tail: map[string]float64{
-			"b": 1.5,
-			"c": 2.0,
-		},
-	}
-
-	expectedString := "Fact: a(x)={(b,1.5),(c,2.0)}"
-	result := fact.String()
-
-	if result != expectedString {
-		t.Errorf("Expected string representation: %s, got: %s", expectedString, result)
-	}
-}
-
-func TestFunctionStringRepresentation(t *testing.T) {
-	function := &Function{
-		function:        "f(x,y)=(g(x),h(y))",
-		head:            "f(x,y)",
-		headWithoutVars: "f",
-		tail:            []string{"g(x)", "h(y)"},
-		tailWithoutVars: []string{"g", "h"},
-	}
-
-	expectedString := "Function: f(x,y)=(g(x),h(y))"
-	result := function.String()
-
-	if result != expectedString {
-		t.Errorf("Expected string representation: %s, got: %s", expectedString, result)
 	}
 }

@@ -46,7 +46,7 @@ func LoadFromFile(path string) (map[string]*Fact, map[string]*Function, error) {
 func getFactsDict(facts []*Fact) map[string]*Fact {
 	factsDict := make(map[string]*Fact)
 	for _, fact := range facts {
-		factsDict[fact.headWithoutVars] = fact
+		factsDict[fact.HeadWithoutVars] = fact
 	}
 	return factsDict
 }
@@ -54,7 +54,7 @@ func getFactsDict(facts []*Fact) map[string]*Fact {
 func getFunctionsDict(functions []*Function) map[string]*Function {
 	functionsDict := make(map[string]*Function)
 	for _, function := range functions {
-		functionsDict[function.headWithoutVars] = function
+		functionsDict[function.HeadWithoutVars] = function
 	}
 	return functionsDict
 }
