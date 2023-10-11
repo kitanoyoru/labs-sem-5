@@ -1,10 +1,15 @@
 import os
 
+import logging
+
 from fastapi import APIRouter
 from fastapi.responses import ORJSONResponse, StreamingResponse
 
 from src.config import Directories
 from src.errors import FileNotFound
+
+
+logger = logging.getLogger(__file__)
 
 
 def create_router(
@@ -21,9 +26,9 @@ def create_router(
     async def get_file(file_path: str):
         host_file_path = os.path.join(directories.static, file_path)
 
+        logger.info("hello worldf")
         if os.path.isfile(host_file_path):
             file_stream = open(host_file_path, mode="rb")
-            print("hello")
             return StreamingResponse(file_stream, media_type="application/octet-stream")
 
         raise FileNotFound(f"File {file_path} not found")

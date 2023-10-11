@@ -11,7 +11,6 @@ client = httpx.AsyncClient()
 
 
 async def main(method: str, path: str):
-    client.send
     response = await client.request(
         method=method,
         url=f"http://localhost:8000/api/v0/{path}",
