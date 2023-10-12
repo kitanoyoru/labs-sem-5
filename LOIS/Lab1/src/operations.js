@@ -1,4 +1,4 @@
-function gedelImpl(v1, v2) {
+function gedelImplication(v1, v2) {
   return v1 <= v2 ? 1 : v2;
 }
 
@@ -7,13 +7,13 @@ function matrixImplication(set1, set2) {
     Object.entries(set1).map(([i, v1]) => [
       i,
       Object.fromEntries(
-        Object.entries(set2).map(([j, v2]) => [j, gedelImpl(v1, v2)])
+        Object.entries(set2).map(([j, v2]) => [j, gedelImplication(v1, v2)])
       ),
     ])
   );
 }
 
-function tNorm(v1, v2) {
+function triangularNorm(v1, v2) {
   return Math.min(v1, v2);
 }
 
@@ -31,13 +31,13 @@ function buildImplicationTable(set1, relation) {
     relationKeys.map((i) => [
       i,
       Object.fromEntries(
-        Object.entries(relation[i]).map(([j, v]) => [j, tNorm(set1[i], v)])
+        Object.entries(relation[i]).map(([j, v]) => [j, triangularNorm(set1[i], v)])
       ),
     ])
   );
 }
 
-function compress(implTable) {
+function maxComposition(implTable) {
   const rowKeys = Object.keys(implTable);
   const colKeys = Object.keys(implTable[rowKeys[0]]);
   return Object.fromEntries(
@@ -55,10 +55,10 @@ function isEqualSets(set1, set2) {
 }
 
 module.exports = {
-  gedelImpl,
+  gedelImplication,
   matrixImplication,
-  tNorm,
+  triangularNorm,
   buildImplicationTable,
   isEqualSets,
-  compress,
+  maxComposition,
 };

@@ -1,9 +1,9 @@
 const {
-  gedelImpl,
+  gedelImplication,
   matrixImplication,
-  tNorm,
+  triangularNorm,
   buildImplicationTable,
-  compress,
+  maxComposition,
   isEqualSets,
 } = require('../src/operations.js');
 
@@ -13,7 +13,7 @@ describe('gedelImpl', () => {
     const v2 = 3;
     const expectedResult = 1;
 
-    const result = gedelImpl(v1, v2);
+    const result = gedelImplication(v1, v2);
 
     expect(result).toBe(expectedResult);
   });
@@ -23,7 +23,7 @@ describe('gedelImpl', () => {
     const v2 = 4;
     const expectedResult = 4;
 
-    const result = gedelImpl(v1, v2);
+    const result = gedelImplication(v1, v2);
 
     expect(result).toBe(expectedResult);
   });
@@ -50,7 +50,7 @@ describe('tNorm', () => {
     const v2 = 3;
     const expectedResult = 2;
 
-    const result = tNorm(v1, v2);
+    const result = triangularNorm(v1, v2);
 
     expect(result).toBe(expectedResult);
   });
@@ -97,7 +97,7 @@ describe('compress', () => {
       y: 3,
     };
 
-    const result = compress(implTable);
+    const result = maxComposition(implTable);
 
     expect(result).toEqual(expectedResult);
   });

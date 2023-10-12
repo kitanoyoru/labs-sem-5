@@ -1,3 +1,16 @@
+/*
+Лабораторная работа №1
+по дисциплине ЛОИС
+
+Выполнена студентами группы 121703
+Прокопович Иван Станиславович, Рутковский Алекасандр Mаксимович 
+
+Вариант 21:
+Реализовать прямой нечеткий логический вывод используя импликацию Геделя
+*/
+
+
+
 const operations = require("./src/operations");
 const { loadFromFile } = require("./src/data_loader");
 
@@ -20,7 +33,7 @@ function main() {
     );
   }
 
-  console.log(functionTables)
+  console.log("Implication Function tables:", functionTables)
 
   const result = [];
 
@@ -28,8 +41,8 @@ function main() {
     for (const fact of Object.values(facts)) {
       try {
         const tmp = operations.buildImplicationTable(fact.tail, functionTable);
-        console.log(tmp)
-        result.push(operations.compress(tmp));
+        console.log("Triangular Norm: ", tmp)
+        result.push(operations.maxComposition(tmp));
       } catch (_) {
       }
     }
@@ -41,7 +54,7 @@ function main() {
       .join(", ")
   );
 
-  console.log("Ответ: {", resultStr.join("}, {"), "}.");
+  console.log("Result: {", resultStr.join("}, {"), "}.");
 }
 
 if (require.main === module) {
