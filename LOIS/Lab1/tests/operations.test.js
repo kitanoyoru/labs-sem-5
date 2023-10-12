@@ -1,8 +1,8 @@
 const {
   gedelImpl,
-  matrixImpl,
+  matrixImplication,
   tNorm,
-  builtImplTable,
+  buildImplicationTable,
   compress,
   isEqualSets,
 } = require('../src/operations.js');
@@ -38,7 +38,7 @@ describe('matrixImpl', () => {
       b: { x: 1, y: 1 },
     };
 
-    const result = matrixImpl(set1, set2);
+    const result = matrixImplication(set1, set2);
 
     expect(result).toEqual(expectedResult);
   });
@@ -68,7 +68,7 @@ describe('builtImplTable', () => {
       b: { x: 3, y: 2 },
     };
 
-    const result = builtImplTable(set1, relation);
+    const result = buildImplicationTable(set1, relation);
 
     expect(result).toEqual(expectedResult);
   });

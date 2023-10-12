@@ -2,7 +2,7 @@ function gedelImpl(v1, v2) {
   return v1 <= v2 ? 1 : v2;
 }
 
-function matrixImpl(set1, set2) {
+function matrixImplication(set1, set2) {
   return Object.fromEntries(
     Object.entries(set1).map(([i, v1]) => [
       i,
@@ -17,7 +17,7 @@ function tNorm(v1, v2) {
   return Math.min(v1, v2);
 }
 
-function builtImplTable(set1, relation) {
+function buildImplicationTable(set1, relation) {
   const set1Keys = Object.keys(set1);
   const relationKeys = Object.keys(relation);
 
@@ -56,9 +56,9 @@ function isEqualSets(set1, set2) {
 
 module.exports = {
   gedelImpl,
-  matrixImpl,
+  matrixImplication,
   tNorm,
-  builtImplTable,
+  buildImplicationTable,
   isEqualSets,
   compress,
 };

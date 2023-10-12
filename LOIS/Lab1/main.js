@@ -14,27 +14,26 @@ function main() {
     const firstSet = facts[firstSetName];
     const secondSet = facts[secondSetName];
 
-    functionTables[functionHead] = operations.matrixImpl(
+    functionTables[functionHead] = operations.matrixImplication(
       firstSet.tail,
       secondSet.tail
     );
   }
 
+  console.log(functionTables)
 
   const result = [];
 
   for (const functionTable of Object.values(functionTables)) {
     for (const fact of Object.values(facts)) {
       try {
-        const tmp = operations.builtImplTable(fact.tail, functionTable);
+        const tmp = operations.buildImplicationTable(fact.tail, functionTable);
         console.log(tmp)
         result.push(operations.compress(tmp));
       } catch (_) {
       }
     }
   }
-
-  console.log("Result:", result);
 
   const resultStr = result.map((conclusionSet) =>
     Object.entries(conclusionSet)
