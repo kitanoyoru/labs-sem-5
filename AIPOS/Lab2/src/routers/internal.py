@@ -1,5 +1,2 @@
-
-
-
 def create_router():
     ...

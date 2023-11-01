@@ -1,19 +1,21 @@
 from dataclasses import dataclass
 from typing import Tuple, TypeVar
+import alembic.command
 
-from sqlalchemy import Select, func, select 
+from sqlalchemy import Select, func, select, text
+import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.config import create_alembic_config
 
 from src.models.models import AdministratorModel
 from src.pagination import PaginatedResult, PaginationOptions
 
 
 @dataclass(frozen=True)
-class GetAdministratorFilter:
-    ID: str | None
+class AdministratorFilter:
+    ID: int | None
     full_name: str | None
-    pagination_options: PaginationOptions
-
+    # pagination_options: PaginationOptions
 
 
 class Database:
@@ -23,23 +25,35 @@ class Database:
     ):
         self.session = session
 
-
     async def save_administrator(self, administrator: AdministratorModel):
         self.session.add(administrator)
         await self.session.commit()
 
-    async def get_administrator(self, filter: GetAdministratorFilter) -> PaginatedResult[AdministratorModel]:
+    async def get_administrator(
+        self, filter: AdministratorFilter
+    ) -> list[AdministratorModel]:
         stmt = select(AdministratorModel).order_by(
             AdministratorModel.ID, AdministratorModel.full_name
         )
 
         if filter.ID is not None:
-            stmt = stmt.where(AdministratorModel.ID.ilike(filter.ID))
+            stmt = stmt.where(AdministratorModel.ID == filter.ID)
 
         if filter.full_name is not None:
             stmt = stmt.where(AdministratorModel.full_name.ilike(filter.full_name))
 
-        return await _paginate(self.session, stmt, filter.pagination_options)
+        results = await self.session.scalars(stmt)
+        items = list(results.all())
+
+        return items
+
+    async def delete_administrator(self, filter: AdministratorFilter):
+        models = await self.get_administrator(filter)
+
+        for model in models:
+            await self.session.delete(model)
+
+        await self.session.commit()
 
 
 T = TypeVar("T")
@@ -68,4 +82,21 @@ async def _paginate(
         limit=pagination_options.limit,
         total_count=total_count,
     )
+
+
+def reset_database(database_url: str):
+    engine = sqlalchemy.create_engine(database_url)
+
+    with engine.connect() as connection:
+        with connection.begin():
+            connection.execute(
+                text(
+                    "DROP TABLE IF EXISTS administrator, employee, category, employee_position, payment_history, position, system_metadata CASCADE;"
+                )
+            )
+
+    config = create_alembic_config(engine)
+
+    alembic.command.stamp(config, "base", purge=True)
+    alembic.command.upgrade(config, "head")
 

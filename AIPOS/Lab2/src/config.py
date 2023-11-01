@@ -23,6 +23,7 @@ def get_directories() -> Directories:
         test_data=str(root_dir / "test_data"),
     )
 
+
 def get_database_url() -> str:
     return f"postgresql+psycopg://{os.environ['DATABASE_URL']}"
 
@@ -36,9 +37,8 @@ def create_engine_from_env() -> AsyncEngine:
 def create_alembic_config(this_engine: sqlalchemy.Engine) -> alembic.config.Config:
     config = alembic.config.Config()
 
-    config.set_main_option("script_location", "sammelrepository:migrations")
+    config.set_main_option("script_location", "src:migrations")
 
     config.attributes["engine"] = this_engine
 
     return config
-

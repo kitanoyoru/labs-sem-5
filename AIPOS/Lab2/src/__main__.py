@@ -1,7 +1,7 @@
 import logging
 import os
 
-from .cli import cli
+from src.cli import cli
 
 log_file = os.environ["LOG_FILE"]
 logging.basicConfig(

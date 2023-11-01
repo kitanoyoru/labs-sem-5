@@ -3,7 +3,6 @@ from typing import TypeVar, Generic, Callable, Annotated
 
 from fastapi import Query
 from pydantic import BaseModel
-from pydantic.generics import GenericModel
 
 
 class PaginationOptions(BaseModel):
@@ -16,7 +15,7 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-class PaginatedResult(GenericModel, Generic[T]):
+class PaginatedResult(BaseModel, Generic[T]):
     items: list[T]
     offset: int
     limit: int
@@ -80,4 +79,3 @@ def get_pagination_options(
         limit=limit,
         show_all=show_all,
     )
-

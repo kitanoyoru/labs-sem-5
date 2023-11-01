@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
-#from fastapi.templating import Jinja2Templates
+
+# from fastapi.templating import Jinja2Templates
 
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request as StarletteRequest
 
-#import jinja2
+# import jinja2
 
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
@@ -16,7 +17,8 @@ from src.service import Service
 from src.config import create_engine_from_env, get_directories
 
 from src.routers.v0 import create_router as create_api_router
-#from src.routers.internal import create_router as create_internal_router
+
+# from src.routers.internal import create_router as create_internal_router
 
 
 class CustomCORSMiddleware(BaseHTTPMiddleware):
@@ -29,6 +31,7 @@ class CustomCORSMiddleware(BaseHTTPMiddleware):
         response.headers["Access-Control-Allow-Headers"] = "*"
         return response
 
+
 def create_app() -> FastAPI:
     engine = create_engine_from_env()
 
@@ -36,9 +39,8 @@ def create_app() -> FastAPI:
         engine=engine,
     )
 
-def create_app_with_config(
-    engine: AsyncEngine
-) -> FastAPI:
+
+def create_app_with_config(engine: AsyncEngine) -> FastAPI:
     directories = get_directories()
 
     app = FastAPI(
@@ -52,10 +54,10 @@ def create_app_with_config(
     )
     app.add_middleware(CustomCORSMiddleware)
 
-    #templates = Jinja2Templates(
+    # templates = Jinja2Templates(
     #    directory=directories.templates,
     #    undefined=jinja2.StrictUndefined,
-    #)
+    # )
 
     app.mount(
         "/static",
@@ -74,8 +76,7 @@ def create_app_with_config(
     api_router = create_api_router(get_service)
     app.include_router(api_router, prefix="/api/v0", tags=["api"])
 
-    #internal_router = create_internal_router(templates, get_service)
-    #app.include_router(internal_router, prefix="internal", tags=["internal"])
+    # internal_router = create_internal_router(templates, get_service)
+    # app.include_router(internal_router, prefix="internal", tags=["internal"])
 
     return app
-

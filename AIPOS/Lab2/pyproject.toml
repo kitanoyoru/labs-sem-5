@@ -16,9 +16,11 @@ pyyaml = "^6.0.1"
 gunicorn = "^21.2.0"
 sqlalchemy = "^2.0.22"
 alembic = "^1.12.1"
-pydantic = "^2.4.2"
 psycopg2 = "^2.9.9"
 jinja2 = "^3.1.2"
+pydantic = "^2.4.2"
+psycopg = "^3.1.12"
+python-multipart = "^0.0.6"
 
 
 [tool.poetry.group.dev.dependencies]

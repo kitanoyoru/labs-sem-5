@@ -15,6 +15,10 @@ venv-clean:
 source:
 	source $(PWD)/.env.sh &&
 
+reset-db:
+	source $(PWD)/.env.sh && \
+	python3 -m src reset-db
+
 run-local:
 	source $(PWD)/.env.sh && \
 	uvicorn src.main:create_app --factory --reload --log-config=./config/log_conf.yaml
