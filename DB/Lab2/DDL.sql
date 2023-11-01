@@ -161,15 +161,7 @@ SELECT *
 FROM Category
 WHERE ChangeDate = CURRENT_DATE;
 
--- Procedures
-
-CREATE OR REPLACE PROCEDURE get_employees_with_min_salary_for_month(
-    mont VARCHAR(12)
-)
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
+CREATE VIEW get_employees_with_min_salary_for_month AS 
     SELECT e.*
     FROM Employee AS e
              INNER JOIN (SELECT ph.Employee_ID
@@ -178,24 +170,12 @@ BEGIN
                          GROUP BY ph.Employee_ID
                          ORDER BY SUM(ph.Earnings) DESC
                          LIMIT 1) AS top_employee ON e.ID = top_employee.Employee_ID;
-END;
-$$;
 
-CREATE OR REPLACE PROCEDURE get_employee_payment_for_month(
-    employee_i INTEGER,
-    mont VARCHAR(12)
-)
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
+CREATE VIEW PROCEDURE get_employee_payment_for_month AS 
     SELECT *
     FROM Payment_History
     WHERE Employee_ID = employee_i
       AND Month = mont;
-END;
-$$;
-
 ---
 
 -- Functions
