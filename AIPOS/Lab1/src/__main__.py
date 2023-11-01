@@ -5,9 +5,9 @@ from .cli import cli
 
 log_file = os.environ["LOG_FILE"]
 logging.basicConfig(
-    level=logging.INFO,
     filename=log_file,
-    filemode="a",
+    level=logging.INFO,
+    encoding="UTF-8",
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 

@@ -12,6 +12,7 @@
 
 
 const operations = require("./src/operations");
+
 const { loadFromFile } = require("./src/data_loader");
 
 function main() {
@@ -37,11 +38,11 @@ function main() {
 
   const result = [];
 
-  for (const functionTable of Object.values(functionTables)) {
+  for (const [functionHead, functionTable] of Object.entries(functionTables)) {
     for (const fact of Object.values(facts)) {
       try {
         const tmp = operations.buildImplicationTable(fact.tail, functionTable);
-        console.log("Triangular Norm: ", tmp)
+        console.log("Triangular Norm", functionHead, "with", fact.head, ": ", tmp)
         result.push(operations.maxComposition(tmp));
       } catch (_) {
       }

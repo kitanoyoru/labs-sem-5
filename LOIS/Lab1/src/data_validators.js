@@ -1,5 +1,6 @@
 function removeVariables(head) {
     const name = head.split("(")[0];
+    return name
     const numOfComma = (head.match(/,/g) || []).length;
     return `${name}(${",".repeat(numOfComma)})`;
 }

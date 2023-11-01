@@ -26,7 +26,7 @@ def create_router(
     async def get_file(file_path: str):
         host_file_path = os.path.join(directories.static, file_path)
 
-        logger.info("hello worldf")
+        logger.info(f"wanna get file {file_path}")
         if os.path.isfile(host_file_path):
             file_stream = open(host_file_path, mode="rb")
             return StreamingResponse(file_stream, media_type="application/octet-stream")
