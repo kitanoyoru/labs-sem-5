@@ -7,9 +7,9 @@ function matrixImplication(set1, set2) {
     Object.entries(set1).map(([i, v1]) => [
       i,
       Object.fromEntries(
-        Object.entries(set2).map(([j, v2]) => [j, gedelImplication(v1, v2)])
+        Object.entries(set2).map(([j, v2]) => [j, gedelImplication(v1, v2)]),
       ),
-    ])
+    ]),
   );
 }
 
@@ -23,7 +23,7 @@ function buildImplicationTable(set1, relation) {
 
   if (!isEqualSets(set1Keys, relationKeys)) {
     throw new Error(
-      `${JSON.stringify(set1Keys)} != ${JSON.stringify(relationKeys)}`
+      `${JSON.stringify(set1Keys)} != ${JSON.stringify(relationKeys)}`,
     );
   }
 
@@ -31,9 +31,12 @@ function buildImplicationTable(set1, relation) {
     relationKeys.map((i) => [
       i,
       Object.fromEntries(
-        Object.entries(relation[i]).map(([j, v]) => [j, triangularNorm(set1[i], v)])
+        Object.entries(relation[i]).map(([j, v]) => [
+          j,
+          triangularNorm(set1[i], v),
+        ]),
       ),
-    ])
+    ]),
   );
 }
 
@@ -44,7 +47,7 @@ function maxComposition(implTable) {
     colKeys.map((colKey) => [
       colKey,
       Math.max(...rowKeys.map((rowKey) => implTable[rowKey][colKey])),
-    ])
+    ]),
   );
 }
 
