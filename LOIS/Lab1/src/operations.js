@@ -43,6 +43,7 @@ function buildImplicationTable(set1, relation) {
 function maxComposition(implTable) {
   const rowKeys = Object.keys(implTable);
   const colKeys = Object.keys(implTable[rowKeys[0]]);
+
   return Object.fromEntries(
     colKeys.map((colKey) => [
       colKey,

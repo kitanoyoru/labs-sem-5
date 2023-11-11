@@ -35,7 +35,7 @@ function main() {
     );
   }
 
-  console.log("Implication Function tables:", functionTables);
+  console.log("Gedel implication function tables:", functionTables);
 
   const rl = readline.createInterface({
     input: process.stdin,
