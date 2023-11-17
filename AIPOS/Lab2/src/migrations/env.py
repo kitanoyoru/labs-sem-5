@@ -1,6 +1,6 @@
 from logging.config import fileConfig
-import sqlalchemy
 
+import sqlalchemy
 from alembic import context
 
 # this is the Alembic Config object, which provides

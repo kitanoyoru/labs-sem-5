@@ -1,19 +1,18 @@
 from __future__ import annotations
-from pydantic import BaseModel, ConfigDict
 
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import (
+    BigInteger,
     Column,
+    Date,
+    Float,
     ForeignKey,
     Integer,
     String,
-    BigInteger,
-    Float,
-    Date,
     func,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
 
 Base = declarative_base()
 
@@ -22,6 +21,7 @@ class AdministratorModel(Base):
     __tablename__ = "administrator"
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
+    hashed_password = Column(String, nullable=False)
     full_name = Column(String(15), nullable=False)
 
     employee = relationship("EmployeeModel", back_populates="administrator")
@@ -37,6 +37,7 @@ class AdministratorOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     ID: int
+    hashed_password: str
     full_name: str
 
     @staticmethod

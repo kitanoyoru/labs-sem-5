@@ -5,7 +5,6 @@ import click
 from src.config import get_database_url
 from src.database import reset_database
 
-
 logger = logging.getLogger(__name__)
 
 

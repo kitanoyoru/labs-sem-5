@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-
 from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from src.database import Database, AdministratorFilter
+
+from src.database import AdministratorFilter, Database
 from src.models.models import AdministratorModel, AdministratorOut
 
 # from src.pagination import PaginatedResult

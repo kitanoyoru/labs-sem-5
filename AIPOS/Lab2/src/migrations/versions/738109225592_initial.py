@@ -7,9 +7,8 @@ Create Date: 2023-11-01 07:12:24.716088
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "738109225592"
@@ -40,6 +39,7 @@ def upgrade() -> None:
         "administrator",
         sa.Column("ID", sa.Integer(), nullable=False),
         sa.Column("full_name", sa.String(length=15), nullable=False),
+        sa.Column("hashed_password", sa.String(), nullable=False),
         sa.Column("system_metadata_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["system_metadata_id"],

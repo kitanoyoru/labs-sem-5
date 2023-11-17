@@ -1,20 +1,20 @@
 from dataclasses import dataclass
 from typing import Tuple, TypeVar
+
 import alembic.command
-
-from sqlalchemy import Select, func, select, text
 import sqlalchemy
+from sqlalchemy import Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.config import create_alembic_config
 
+from src.config import create_alembic_config
 from src.models.models import AdministratorModel
 from src.pagination import PaginatedResult, PaginationOptions
 
 
 @dataclass(frozen=True)
 class AdministratorFilter:
-    ID: int | None
-    full_name: str | None
+    ID: int | None = None
+    full_name: str | None = None
     # pagination_options: PaginationOptions
 
 
@@ -99,4 +99,3 @@ def reset_database(database_url: str):
 
     alembic.command.stamp(config, "base", purge=True)
     alembic.command.upgrade(config, "head")
-

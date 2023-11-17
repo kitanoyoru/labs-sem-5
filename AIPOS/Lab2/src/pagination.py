@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TypeVar, Generic, Callable, Annotated
+
+from typing import Annotated, Callable, Generic, TypeVar
 
 from fastapi import Query
 from pydantic import BaseModel

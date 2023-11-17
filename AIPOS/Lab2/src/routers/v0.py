@@ -3,12 +3,10 @@ from typing import Annotated, Any, AsyncGenerator, Callable, Optional
 
 from fastapi import APIRouter, Depends, Form, Query
 from fastapi.responses import ORJSONResponse
+
 from src.database import AdministratorFilter
 from src.models.models import AdministratorOut
-
-# from src.pagination import PaginatedResult, PaginationOptions, get_pagination_options
 from src.service import Service
-
 
 logger = logging.getLogger(__file__)
 
@@ -39,7 +37,6 @@ def create_router(
             description="Filter administrator by fullname",
             example="Ivan Prokopovich",
         ),
-        # pagination_options: PaginationOptions = Depends(get_pagination_options),
         service: Service = Depends(get_service),
     ) -> list[AdministratorOut]:
         return await service.get_administrator_by_criteria(
@@ -63,7 +60,6 @@ def create_router(
                 example="Ivan Prokopovich",
             ),
         ],
-
         service: Service = Depends(get_service),
     ):
         return await service.save_administrator(
