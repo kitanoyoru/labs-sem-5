@@ -8,16 +8,17 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
 
-from src.database import AdministratorFilter, EmployeeFilter
+from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
 from src.exceptions import AdministratorNotAllowedException
-from src.models.models import AdministratorModel, EmployeeOut
-from src.service import Service
+from src.models.models import AdministratorModel, EmployeeOut, PaymentHistoryOut
+from src.service import Service, SavePaymentHistoryDTO
 
 logger = logging.getLogger(__file__)
 
 SECRET_KEY = os.environ["AUTH_SECRET_KEY"]
 ALGORITHM = os.environ["AUTH_ALGORITHM"]
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"])
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.environ["AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -141,6 +142,109 @@ def create_router(
             EmployeeFilter(
                 ID=id,
                 full_name=full_name,
+            )
+        )
+
+    @router.get(
+        "/payment_history",
+        name="Get employee payment history",
+        description="Get employee according to the specified query",
+        response_class=ORJSONResponse,
+    )
+    async def get_employee_payment_history(
+        id: Optional[int] = Query(
+            None,
+            alias="id",
+            title="Employee ID",
+            description="Filter administrator by id",
+            example="12",
+        ),
+        full_name: Optional[str] = Query(
+            None,
+            alias="full_name",
+            title="Employee Fullname",
+            description="Filter administrator by fullname",
+            example="Ivan Prokopovich",
+        ),
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ) -> list[PaymentHistoryOut]:
+        try:
+            return await service.get_employee_payment_history_by_criteria(
+                administrator,
+                filter=PaymentHistoryFilter(
+                    ID=id,
+                ),
+            )
+        except AdministratorNotAllowedException as exc:
+            return HTTPException(status_code=405, detail=str(exc))
+
+    @router.post(
+        "/payment_history",
+        name="Add paymeny history model",
+        response_class=ORJSONResponse,
+    )
+    async def add_payment_historyck(
+        employee_id: Annotated[
+            int,
+            Form(
+                title="Employee d",
+            ),
+        ],
+        month: Annotated[
+            str,
+            Form(
+                title="Month",
+                example="January",
+            ),
+        ],
+        earnings: Annotated[
+            int,
+            Form(
+                title="Employee d",
+            ),
+        ],
+        payments: Annotated[
+            int,
+            Form(
+                title="Payments",
+            ),
+        ],
+        deductions: Annotated[
+            int,
+            Form(
+                title="Deductions",
+            ),
+        ],
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.save_payment_history(administrator, employee_id, dto=SavePaymentHistoryDTO(
+            month=month,
+            earnings=earnings,
+            payments=payments,
+            deductions=deductions,
+        ))
+
+    @router.delete(
+        "/payment_history",
+        name="Delete payment history model",
+        response_class=ORJSONResponse,
+    )
+    async def delete_payment_history(
+        id: Optional[int] = Query(
+            None,
+            alias="id",
+            title="Employee ID",
+            description="Filter employee by id",
+            example="12",
+        ),
+        service: Service = Depends(get_service),
+        current_user: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.delete_payment_history(
+            PaymentHistoryFilter(
+                ID=id,
             )
         )
 

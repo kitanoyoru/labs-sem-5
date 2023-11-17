@@ -121,6 +121,23 @@ class PaymentHistoryModel(Base):
     employee = relationship("EmployeeModel", back_populates="payment_history")
 
 
+class PaymentHistoryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    ID: int
+
+    employee_id: int
+
+    month: str
+    earnings: int
+    payments: int
+    deductions: int
+
+    @staticmethod
+    def from_model(history: PaymentHistoryModel) -> PaymentHistoryOut:
+        return PaymentHistoryOut.model_validate(history)
+
+
 class SystemMetadataModel(Base):
     __tablename__ = "system_metadata"
 
