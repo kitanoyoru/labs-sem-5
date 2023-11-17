@@ -5,10 +5,14 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from src.database import AdministratorFilter, Database
-from src.models.models import AdministratorModel, AdministratorOut
-
-# from src.pagination import PaginatedResult
+from src.database import AdministratorFilter, Database, EmployeeFilter
+from src.exceptions import AdministratorNotAllowedException
+from src.models.models import (
+    AdministratorModel,
+    AdministratorOut,
+    EmployeeModel,
+    EmployeeOut,
+)
 
 
 class Service:
@@ -33,11 +37,24 @@ class Service:
         result = await self._database.get_administrator(filter)
         return [AdministratorOut.from_model(model) for model in result]
 
-    async def save_administrator(self, full_name: str):
-        administrator = AdministratorModel(
+    async def save_employee(self, admin: AdministratorModel, full_name: str):
+        employee = EmployeeModel(
             full_name=full_name,
+            administrator_id=admin.ID,
         )
-        return await self._database.save_administrator(administrator)
 
-    async def delete_administrator(self, filter: AdministratorFilter):
-        return await self._database.delete_administrator(filter)
+        return await self._database.save_employee(employee)
+
+    async def get_employee_by_criteria(
+        self, admin: AdministratorModel, filter: EmployeeFilter
+    ) -> list[EmployeeOut]:
+        result = await self._database.get_employee(filter)
+
+        for employee in result:
+            if employee.administrator_id != admin.ID:
+                raise AdministratorNotAllowedException(employee.ID)
+
+        return [EmployeeOut.from_model(model) for model in result]
+
+    async def delete_employee(self, filter: EmployeeFilter):
+        return await self._database.delete_employee(filter)

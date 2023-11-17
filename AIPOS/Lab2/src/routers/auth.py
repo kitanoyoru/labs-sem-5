@@ -27,16 +27,12 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    username: str | None = None
-
-
 def create_router(
     get_service: Callable[[], AsyncGenerator[Service, Any]],
 ) -> APIRouter:
     router = APIRouter()
 
-    @router.post("/login", response_model=Token)
+    @router.post("/token", response_model=Token)
     async def login_administrator(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         service: Service = Depends(get_service),

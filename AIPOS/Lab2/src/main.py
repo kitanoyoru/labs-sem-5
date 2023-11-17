@@ -51,8 +51,7 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
         name="static",
     )
 
-    SessionLocal = async_sessionmaker(
-        autocommit=False, autoflush=False, bind=engine)
+    SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     async def get_service():
         async with SessionLocal() as session:
@@ -61,7 +60,7 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
                 yield service
 
     auth_router = create_auth_router(get_service)
-    app.include_router(auth_router, prefix="/api/v0", tags=["api", "auth"])
+    app.include_router(auth_router, tags=["api", "auth"])
 
     api_router = create_api_router(get_service)
     app.include_router(api_router, prefix="/api/v0", tags=["api"])

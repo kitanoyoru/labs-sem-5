@@ -7,7 +7,7 @@ from sqlalchemy import Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import create_alembic_config
-from src.models.models import AdministratorModel
+from src.models.models import AdministratorModel, EmployeeModel
 from src.pagination import PaginatedResult, PaginationOptions
 
 
@@ -15,7 +15,12 @@ from src.pagination import PaginatedResult, PaginationOptions
 class AdministratorFilter:
     ID: int | None = None
     full_name: str | None = None
-    # pagination_options: PaginationOptions
+
+
+@dataclass(frozen=True)
+class EmployeeFilter:
+    ID: int | None = None
+    full_name: str | None = None
 
 
 class Database:
@@ -24,10 +29,6 @@ class Database:
         session: AsyncSession,
     ):
         self.session = session
-
-    async def save_administrator(self, administrator: AdministratorModel):
-        self.session.add(administrator)
-        await self.session.commit()
 
     async def get_administrator(
         self, filter: AdministratorFilter
@@ -47,12 +48,30 @@ class Database:
 
         return items
 
-    async def delete_administrator(self, filter: AdministratorFilter):
-        models = await self.get_administrator(filter)
+    async def delete_employee(self, filter: EmployeeFilter):
+        models = await self.get_employee(filter)
 
         for model in models:
             await self.session.delete(model)
 
+        await self.session.commit()
+
+    async def get_employee(self, filter: EmployeeFilter) -> list[EmployeeModel]:
+        stmt = select(EmployeeModel).order_by(EmployeeModel.ID, EmployeeModel.full_name)
+
+        if filter.ID is not None:
+            stmt = stmt.where(EmployeeModel.ID == filter.ID)
+
+        if filter.full_name is not None:
+            stmt = stmt.where(EmployeeModel.full_name.ilike(filter.full_name))
+
+        results = await self.session.scalars(stmt)
+        items = list(results.all())
+
+        return items
+
+    async def save_employee(self, employee: EmployeeModel):
+        self.session.add(employee)
         await self.session.commit()
 
 

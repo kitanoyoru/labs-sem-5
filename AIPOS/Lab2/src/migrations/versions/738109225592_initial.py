@@ -62,7 +62,7 @@ def upgrade() -> None:
     op.create_table(
         "employee",
         sa.Column("ID", sa.Integer(), nullable=False),
-        sa.Column("fullname", sa.String(), nullable=True),
+        sa.Column("full_name", sa.String(), nullable=True),
         sa.Column("administrator_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["administrator_id"],
@@ -89,9 +89,9 @@ def upgrade() -> None:
         sa.Column("earnings", sa.BigInteger(), nullable=False),
         sa.Column("payments", sa.BigInteger(), nullable=False),
         sa.Column("deductions", sa.BigInteger(), nullable=False),
-        sa.Column("employee_od", sa.Integer(), nullable=True),
+        sa.Column("employee_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["employee_od"], ["employee.ID"], onupdate="CASCADE", ondelete="CASCADE"
+            ["employee_id"], ["employee.ID"], onupdate="CASCADE", ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("ID"),
     )

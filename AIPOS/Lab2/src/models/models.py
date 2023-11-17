@@ -49,12 +49,23 @@ class EmployeeModel(Base):
     __tablename__ = "employee"
 
     ID = Column(Integer, primary_key=True)
-    fullname = Column(String)
+    full_name = Column(String)
 
     administrator_id = Column(Integer, ForeignKey("administrator.ID"))
     administrator = relationship("AdministratorModel", back_populates="employee")
 
     payment_history = relationship("PaymentHistoryModel", back_populates="employee")
+
+
+class EmployeeOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    ID: int
+    full_name: str
+
+    @staticmethod
+    def from_model(employee: EmployeeModel) -> EmployeeModel:
+        return EmployeeOut.model_validate(employee)
 
 
 class CategoryModel(Base):
