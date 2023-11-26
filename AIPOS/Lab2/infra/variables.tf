@@ -4,6 +4,9 @@ variable "namespace_name" {
     default     = "k8s-ns-for-lab2"
 }
 
+
+
+
 variable "deployment_name" {
     description = "Name of the Kubernetes deployment"
     type        = string
@@ -15,6 +18,10 @@ variable "replica_count" {
     type        = number
     default     = 2
 }
+
+
+
+
 
 variable "app_label" {
     description = "Label for the application"
@@ -32,4 +39,25 @@ variable "container_name" {
     description = "Name of the container"
     type        = string
     default     = "app"
+}
+
+
+
+
+variable "postgres_user" {
+    description = "Username for PostgreSQL"
+    type        = string
+    default     = "kitanoyoru"
+}
+
+variable "postgres_password" {
+    description = "Password for PostgreSQL"
+    type        = string
+    default     = "1234"
+}
+
+variable "postgres_dbname" {
+    description = "Database for PostgreSQL"
+    type        = string
+    default     = "main"
 }
