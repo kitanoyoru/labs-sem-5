@@ -74,7 +74,11 @@ class Service:
             category_id=category_id,
         )
 
-        return await self._database.assign_position_to_employee(employee_id, position)
+        employee = await self._database._get_employee_by_id(employee_id)
+        if employee.administrator_id != admin.ID:
+            raise AdministratorNotAllowedException(employee_id)
+
+        return await self._database.assign_position_to_employee(employee, position)
 
     async def get_employee_by_criteria(
         self, admin: AdministratorModel, filter: EmployeeFilter
@@ -96,8 +100,8 @@ class Service:
         result = await self._database.get_history(filter)
 
         for history in result:
-            employees = await self._database.get_employee(
-                filter=EmployeeFilter(ID=history.employee_id)
+            employees = await self._database._get_employee_by_id(
+                history.employee_id,
             )
             for employee in employees:
                 if employee.administrator_id != admin.ID:
@@ -108,9 +112,7 @@ class Service:
     async def save_payment_history(
         self, admin: AdministratorModel, employee_id: int, dto: SavePaymentHistoryDTO
     ):
-        employees = await self._database.get_employee(
-            filter=EmployeeFilter(ID=employee_id)
-        )
+        employees = await self._database._get_employee_by_id(employee_id)
 
         for employee in employees:
             if employee.administrator_id != admin.ID:

@@ -123,6 +123,10 @@ class Database:
 
         await self.session.commit()
 
+    async def _get_employee_by_id(self, id: int) -> EmployeeModel:
+        stmt = select(EmployeeModel).where(EmployeeModel.ID == id)
+        return await self.session.scalar(stmt)
+
 
 T = TypeVar("T")
 

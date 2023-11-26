@@ -116,10 +116,10 @@ def create_router(
 
     @router.post(
         "/employee/position",
-        name="Add employee model",
+        name="Assign new positon to the employee",
         response_class=ORJSONResponse,
     )
-    async def add_position_to_employee(
+    async def assign_position_to_employee(
         employee_id: Annotated[
             int,
             Form(
