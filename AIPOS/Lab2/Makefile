@@ -30,7 +30,8 @@ clean:
 
 lint:
 	poetry run black . && \
-	poetry run isort .
+	poetry run isort . && \
+	terraform fmt
 
 ruff:
 	poetry run ruff $(SRC) --fix .
