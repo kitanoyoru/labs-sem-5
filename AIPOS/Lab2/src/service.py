@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-
 from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -18,9 +17,10 @@ from src.models.models import (
     AdministratorModel,
     AdministratorOut,
     EmployeeModel,
-    PaymentHistoryModel,
     EmployeeOut,
+    PaymentHistoryModel,
     PaymentHistoryOut,
+    PositionModel,
 )
 
 
@@ -62,6 +62,20 @@ class Service:
 
         return await self._database.save_employee(employee)
 
+    async def assign_position_to_employee(
+        self,
+        admin: AdministratorModel,
+        employee_id: int,
+        position_name: str,
+        category_id: int,
+    ):
+        position = PositionModel(
+            name=position_name,
+            category_id=category_id,
+        )
+
+        return await self._database.assign_position_to_employee(employee_id, position)
+
     async def get_employee_by_criteria(
         self, admin: AdministratorModel, filter: EmployeeFilter
     ) -> list[EmployeeOut]:
@@ -91,7 +105,9 @@ class Service:
 
         return [PaymentHistoryOut.from_model(model) for model in result]
 
-    async def save_payment_history(self, admin: AdministratorModel, employee_id: int, dto: SavePaymentHistoryDTO):
+    async def save_payment_history(
+        self, admin: AdministratorModel, employee_id: int, dto: SavePaymentHistoryDTO
+    ):
         employees = await self._database.get_employee(
             filter=EmployeeFilter(ID=employee_id)
         )
@@ -105,7 +121,7 @@ class Service:
             month=dto.month,
             earnings=dto.earnings,
             payments=dto.payments,
-            deductions=dto.deductions
+            deductions=dto.deductions,
         )
 
         return await self._database.save_history(history)

@@ -18,17 +18,17 @@ Base = declarative_base()
 
 
 class AdministratorModel(Base):
-    __tablename__ = "administrator"
+    __tablename__ = "t_administrator"
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
     hashed_password = Column(String, nullable=False)
     full_name = Column(String(15), nullable=False)
 
-    employee = relationship("EmployeeModel", back_populates="administrator")
+    employee = relationship("EmployeeModel", back_populates="t_administrator")
 
     system_metadata_id = Column(
         Integer,
-        ForeignKey("system_metadata.ID", ondelete="CASCADE", onupdate="CASCADE"),
+        ForeignKey("t_system_metadata.ID", ondelete="CASCADE", onupdate="CASCADE"),
     )
     system_metadata = relationship("SystemMetadataModel")
 
@@ -45,16 +45,36 @@ class AdministratorOut(BaseModel):
         return AdministratorOut.model_validate(administrator)
 
 
+class Employee_Position(Base):
+    __tablename__ = "t_employee_position"
+
+    employee_id = Column(
+        Integer,
+        ForeignKey("t_employee.ID", ondelete="CASCADE", onupdate="CASCADE"),
+        primary_key=True,
+    )
+    position_id = Column(
+        Integer,
+        ForeignKey("t_position.ID", ondelete="CASCADE", onupdate="CASCADE"),
+        primary_key=True,
+    )
+
+
 class EmployeeModel(Base):
-    __tablename__ = "employee"
+    __tablename__ = "t_employee"
 
     ID = Column(Integer, primary_key=True)
-    full_name = Column(String)
 
-    administrator_id = Column(Integer, ForeignKey("administrator.ID"))
-    administrator = relationship("AdministratorModel", back_populates="employee")
+    full_name = Column(String, index=True)
 
-    payment_history = relationship("PaymentHistoryModel", back_populates="employee")
+    administrator_id = Column(Integer, ForeignKey("t_administrator.ID"))
+    administrator = relationship("AdministratorModel", back_populates="t_employee")
+
+    positions = relationship(
+        "PositionModel", secondary=Employee_Position, backref="t_employee"
+    )
+
+    payment_history = relationship("PaymentHistoryModel", back_populates="t_employee")
 
 
 class EmployeeOut(BaseModel):
@@ -69,44 +89,29 @@ class EmployeeOut(BaseModel):
 
 
 class CategoryModel(Base):
-    __tablename__ = "category"
+    __tablename__ = "t_category"
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
     coefficient = Column(Float, nullable=False)
     change_date = Column(Date, nullable=False, default=func.current_date())
 
-    position = relationship("PositionModel", back_populates="category")
+    position = relationship("PositionModel", back_populates="t_category")
 
 
 class PositionModel(Base):
-    __tablename__ = "position"
+    __tablename__ = "t_position"
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(30), nullable=False)
 
     category_id = Column(
-        Integer, ForeignKey("category.ID", ondelete="CASCADE", onupdate="CASCADE")
+        Integer, ForeignKey("t_category.ID", ondelete="CASCADE", onupdate="CASCADE")
     )
-    category = relationship("CategoryModel", back_populates="position")
-
-
-class Employee_Position(Base):
-    __tablename__ = "employee_position"
-
-    employee_id = Column(
-        Integer,
-        ForeignKey("employee.ID", ondelete="CASCADE", onupdate="CASCADE"),
-        primary_key=True,
-    )
-    position_id = Column(
-        Integer,
-        ForeignKey("position.ID", ondelete="CASCADE", onupdate="CASCADE"),
-        primary_key=True,
-    )
+    category = relationship("CategoryModel", back_populates="t_position")
 
 
 class PaymentHistoryModel(Base):
-    __tablename__ = "payment_history"
+    __tablename__ = "t_payment_history"
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
 
@@ -116,9 +121,9 @@ class PaymentHistoryModel(Base):
     deductions = Column(BigInteger, nullable=False)
 
     employee_id = Column(
-        Integer, ForeignKey("employee.ID", ondelete="CASCADE", onupdate="CASCADE")
+        Integer, ForeignKey("t_employee.ID", ondelete="CASCADE", onupdate="CASCADE")
     )
-    employee = relationship("EmployeeModel", back_populates="payment_history")
+    employee = relationship("EmployeeModel", back_populates="t_payment_history")
 
 
 class PaymentHistoryOut(BaseModel):
@@ -139,7 +144,7 @@ class PaymentHistoryOut(BaseModel):
 
 
 class SystemMetadataModel(Base):
-    __tablename__ = "system_metadata"
+    __tablename__ = "t_system_metadata"
 
     ID = Column(Integer, primary_key=True)
     trade_union_contribution = Column(BigInteger, nullable=False)

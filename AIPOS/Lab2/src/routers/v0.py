@@ -11,14 +11,13 @@ from pydantic import BaseModel
 from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import AdministratorModel, EmployeeOut, PaymentHistoryOut
-from src.service import Service, SavePaymentHistoryDTO
+from src.service import SavePaymentHistoryDTO, Service
 
 logger = logging.getLogger(__file__)
 
 SECRET_KEY = os.environ["AUTH_SECRET_KEY"]
 ALGORITHM = os.environ["AUTH_ALGORITHM"]
-ACCESS_TOKEN_EXPIRE_MINUTES = int(
-    os.environ["AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"])
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -113,6 +112,40 @@ def create_router(
         return await service.save_employee(
             administrator,
             full_name=full_name,
+        )
+
+    @router.post(
+        "/employee/position",
+        name="Add employee model",
+        response_class=ORJSONResponse,
+    )
+    async def add_position_to_employee(
+        employee_id: Annotated[
+            int,
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ],
+        position_name: Annotated[
+            str,
+            Form(
+                title="Employee position name",
+                example="Developer",
+            ),
+        ],
+        category_id: Annotated[
+            int,
+            Form(title="Employee's positionn referenced category object", example="1"),
+        ],
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.add_position_to_employee(
+            administrator,
+            employee_id=employee_id,
+            position_name=position_name,
+            category_id=category_id,
         )
 
     @router.delete(
@@ -219,12 +252,16 @@ def create_router(
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
-        return await service.save_payment_history(administrator, employee_id, dto=SavePaymentHistoryDTO(
-            month=month,
-            earnings=earnings,
-            payments=payments,
-            deductions=deductions,
-        ))
+        return await service.save_payment_history(
+            administrator,
+            employee_id,
+            dto=SavePaymentHistoryDTO(
+                month=month,
+                earnings=earnings,
+                payments=payments,
+                deductions=deductions,
+            ),
+        )
 
     @router.delete(
         "/payment_history",

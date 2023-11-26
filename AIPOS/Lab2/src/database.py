@@ -7,7 +7,13 @@ from sqlalchemy import Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import create_alembic_config
-from src.models.models import AdministratorModel, EmployeeModel, PaymentHistoryModel
+from src.exceptions import EmployeeNotFoundException
+from src.models.models import (
+    AdministratorModel,
+    EmployeeModel,
+    PaymentHistoryModel,
+    PositionModel,
+)
 from src.pagination import PaginatedResult, PaginationOptions
 
 
@@ -46,8 +52,7 @@ class Database:
             stmt = stmt.where(AdministratorModel.ID == filter.ID)
 
         if filter.full_name is not None:
-            stmt = stmt.where(
-                AdministratorModel.full_name.ilike(filter.full_name))
+            stmt = stmt.where(AdministratorModel.full_name.ilike(filter.full_name))
 
         results = await self.session.scalars(stmt)
         items = list(results.all())
@@ -63,8 +68,7 @@ class Database:
         await self.session.commit()
 
     async def get_employee(self, filter: EmployeeFilter) -> list[EmployeeModel]:
-        stmt = select(EmployeeModel).order_by(
-            EmployeeModel.ID, EmployeeModel.full_name)
+        stmt = select(EmployeeModel).order_by(EmployeeModel.ID, EmployeeModel.full_name)
 
         if filter.ID is not None:
             stmt = stmt.where(EmployeeModel.ID == filter.ID)
@@ -81,7 +85,22 @@ class Database:
         self.session.add(employee)
         await self.session.commit()
 
-    async def get_history(self, filter: PaymentHistoryFilter) -> list[PaymentHistoryModel]:
+    async def assign_position_to_employee(
+        self, employee_id: int, position: PositionModel
+    ):
+        employee = self.session.query(EmployeeModel).filter(
+            EmployeeModel.ID == employee_id
+        )
+        if not employee:
+            raise EmployeeNotFoundException(employee_id)
+
+        employee.positions.append(position)
+
+        await self.session.commit()
+
+    async def get_history(
+        self, filter: PaymentHistoryFilter
+    ) -> list[PaymentHistoryModel]:
         stmt = select(PaymentHistoryModel)
 
         if filter.ID is not None:
@@ -121,8 +140,7 @@ async def _paginate(
         count_query = select(func.count()).select_from(query.alias())
         total_count = await session.scalar(count_query) or 0
 
-        query = query.offset(pagination_options.offset).limit(
-            pagination_options.limit)
+        query = query.offset(pagination_options.offset).limit(pagination_options.limit)
         results = await session.scalars(query)
         items = list(results.all())
 
