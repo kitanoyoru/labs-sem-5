@@ -8,6 +8,7 @@ from starlette.requests import Request as StarletteRequest
 
 from src.config import create_engine_from_env, get_directories
 from src.routers.auth import create_router as create_auth_router
+from src.routers.internal import create_router as create_internal_router
 from src.routers.v0 import create_router as create_api_router
 from src.service import Service
 
@@ -64,5 +65,10 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
 
     api_router = create_api_router(get_service)
     app.include_router(api_router, prefix="/api/v0", tags=["CRUD API"])
+
+    internal_router = create_internal_router(get_service)
+    app.include_router(
+        internal_router, prefix="/api/v0/functions", tags=["Business API Functions"]
+    )
 
     return app

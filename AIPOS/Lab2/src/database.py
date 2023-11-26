@@ -10,10 +10,11 @@ from src.config import create_alembic_config
 from src.exceptions import EmployeeNotFoundException
 from src.models.models import (
     AdministratorModel,
+    CategoryModel,
     EmployeeModel,
     PaymentHistoryModel,
     PositionModel,
-    SystemMetadataModel
+    SystemMetadataModel,
 )
 from src.pagination import PaginatedResult, PaginationOptions
 
@@ -128,10 +129,19 @@ class Database:
         stmt = select(SystemMetadataModel)
         return await self.session.scalar(stmt)
 
+    async def get_categories_for_current_date(self) -> list[CategoryModel]:
+        stmt = select(CategoryModel).where(
+            CategoryModel.change_date == func.current_date()
+        )
+
+        results = await self.session.scalars(stmt)
+        items = list(results.all())
+
+        return items
+
     async def _get_employee_by_id(self, id: int) -> EmployeeModel:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)
         return await self.session.scalar(stmt)
-
 
 
 T = TypeVar("T")

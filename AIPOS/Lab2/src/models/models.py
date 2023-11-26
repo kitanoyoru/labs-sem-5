@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import (
     BigInteger,
@@ -26,7 +28,9 @@ class AdministratorModel(Base):
 
     employee = relationship("EmployeeModel", back_populates="t_administrator")
 
-    system_metadata = relationship("SystemMetadataModel", uselist=False, back_populates="t_administrator")
+    system_metadata = relationship(
+        "SystemMetadataModel", uselist=False, back_populates="t_administrator"
+    )
 
 
 class AdministratorOut(BaseModel):
@@ -94,6 +98,17 @@ class CategoryModel(Base):
     position = relationship("PositionModel", back_populates="t_category")
 
 
+class CategoryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    coefficient: float
+    change_date: datetime
+
+    @staticmethod
+    def from_model(category: CategoryModel) -> CategoryOut:
+        return CategoryOut.model_validate(category)
+
+
 class PositionModel(Base):
     __tablename__ = "t_position"
 
@@ -150,7 +165,9 @@ class SystemMetadataModel(Base):
     pension_contribution = Column(BigInteger, nullable=False)
 
     administrator_id = Column(Integer, ForeignKey("t_administrator.ID"))
-    administrator = relationship("AdministratorModel", back_populates="t_system_metadata")
+    administrator = relationship(
+        "AdministratorModel", back_populates="t_system_metadata"
+    )
 
 
 class SystemMetadataOut(BaseModel):
@@ -160,7 +177,6 @@ class SystemMetadataOut(BaseModel):
     income_tax: int
     minimum_salary: int
     pension_contribution: int
-
 
     @staticmethod
     def from_model(system_metadata: SystemMetadataModel) -> SystemMetadataOut:
