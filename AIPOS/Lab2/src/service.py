@@ -24,6 +24,7 @@ from src.models.models import (
     PositionModel,
     SystemMetadataOut,
 )
+from src.shared.enums import MonthEnum
 
 
 @dataclass(frozen=True)

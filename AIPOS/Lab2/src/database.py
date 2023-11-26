@@ -17,6 +17,7 @@ from src.models.models import (
     SystemMetadataModel,
 )
 from src.pagination import PaginatedResult, PaginationOptions
+from src.shared.enums import MonthEnum
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class EmployeeFilter:
 @dataclass(frozen=True)
 class PaymentHistoryFilter:
     ID: int | None = None
+    month: MonthEnum | None = None
 
 
 class Database:
@@ -107,6 +109,9 @@ class Database:
 
         if filter.ID is not None:
             stmt = stmt.where(PaymentHistoryModel.employee_id == filter.ID)
+
+        if filter.month is not None:
+            stmt = stmt.where(PaymentHistoryModel.month == filter.month)
 
         results = await self.session.scalars(stmt)
         items = list(results.all())
