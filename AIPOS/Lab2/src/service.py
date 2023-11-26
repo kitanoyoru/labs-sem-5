@@ -21,6 +21,7 @@ from src.models.models import (
     PaymentHistoryModel,
     PaymentHistoryOut,
     PositionModel,
+    SystemMetadataOut
 )
 
 
@@ -97,9 +98,9 @@ class Service:
     async def get_employee_payment_history_by_criteria(
         self, admin: AdministratorModel, filter: PaymentHistoryFilter
     ) -> list[PaymentHistoryOut]:
-        result = await self._database.get_history(filter)
+        histories = await self._database.get_history(filter)
 
-        for history in result:
+        for history in histories:
             employees = await self._database._get_employee_by_id(
                 history.employee_id,
             )
@@ -107,7 +108,7 @@ class Service:
                 if employee.administrator_id != admin.ID:
                     raise AdministratorNotAllowedException(employee.ID)
 
-        return [PaymentHistoryOut.from_model(model) for model in result]
+        return [PaymentHistoryOut.from_model(model) for model in histories]
 
     async def save_payment_history(
         self, admin: AdministratorModel, employee_id: int, dto: SavePaymentHistoryDTO
@@ -130,3 +131,13 @@ class Service:
 
     async def delete_payment_history(self, filter: PaymentHistoryFilter):
         return await self._database.delete_history(filter)
+
+    async def get_system_metadata(self, admin: AdministratorModel) -> SystemMetadataOut:
+        system_metadata = await self._database.get_system_metadata()
+
+        if system_metadata.administrator_id != admin.ID:
+            raise AdministratorNotAllowedException(system_metadata.ID)
+
+        return SystemMetadataOut.from_model(system_metadata)
+
+

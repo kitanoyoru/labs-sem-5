@@ -214,7 +214,7 @@ def create_router(
 
     @router.post(
         "/payment_history",
-        name="Add paymeny history model",
+        name="Add payment history model",
         response_class=ORJSONResponse,
     )
     async def add_payment_historyck(
@@ -277,12 +277,23 @@ def create_router(
             example="12",
         ),
         service: Service = Depends(get_service),
-        current_user: AdministratorModel = Depends(get_current_user),
+        administrator: AdministratorModel = Depends(get_current_user),
     ):
         return await service.delete_payment_history(
             PaymentHistoryFilter(
                 ID=id,
             )
         )
+
+    @router.get(
+        "/system_metadata",
+        name="Get system metadata",
+        response_class=ORJSONResponse,
+    )
+    async def get_system_metadata(
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.get_system_metadata(administrator)
 
     return router

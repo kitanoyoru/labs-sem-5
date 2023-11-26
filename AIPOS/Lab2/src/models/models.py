@@ -26,11 +26,7 @@ class AdministratorModel(Base):
 
     employee = relationship("EmployeeModel", back_populates="t_administrator")
 
-    system_metadata_id = Column(
-        Integer,
-        ForeignKey("t_system_metadata.ID", ondelete="CASCADE", onupdate="CASCADE"),
-    )
-    system_metadata = relationship("SystemMetadataModel")
+    system_metadata = relationship("SystemMetadataModel", uselist=False, back_populates="t_administrator")
 
 
 class AdministratorOut(BaseModel):
@@ -115,7 +111,7 @@ class PaymentHistoryModel(Base):
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
 
-    month = Column(String(12), nullable=False)
+    month = Column(String(12), nullable=False, index=True)
     earnings = Column(BigInteger, nullable=False)
     payments = Column(BigInteger, nullable=False)
     deductions = Column(BigInteger, nullable=False)
@@ -147,7 +143,25 @@ class SystemMetadataModel(Base):
     __tablename__ = "t_system_metadata"
 
     ID = Column(Integer, primary_key=True)
+
     trade_union_contribution = Column(BigInteger, nullable=False)
     income_tax = Column(BigInteger, nullable=False)
     minimum_salary = Column(BigInteger, nullable=False)
     pension_contribution = Column(BigInteger, nullable=False)
+
+    administrator_id = Column(Integer, ForeignKey("t_administrator.ID"))
+    administrator = relationship("AdministratorModel", back_populates="t_system_metadata")
+
+
+class SystemMetadataOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    trade_union_contribution: int
+    income_tax: int
+    minimum_salary: int
+    pension_contribution: int
+
+
+    @staticmethod
+    def from_model(system_metadata: SystemMetadataModel) -> SystemMetadataOut:
+        return SystemMetadataOut.model_validate(system_metadata)

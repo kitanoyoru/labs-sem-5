@@ -60,9 +60,9 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
                 yield service
 
     auth_router = create_auth_router(get_service)
-    app.include_router(auth_router, tags=["api", "auth"])
+    app.include_router(auth_router, tags=["Auth"])
 
     api_router = create_api_router(get_service)
-    app.include_router(api_router, prefix="/api/v0", tags=["api"])
+    app.include_router(api_router, prefix="/api/v0", tags=["CRUD API"])
 
     return app

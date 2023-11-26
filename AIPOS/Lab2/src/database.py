@@ -13,6 +13,7 @@ from src.models.models import (
     EmployeeModel,
     PaymentHistoryModel,
     PositionModel,
+    SystemMetadataModel
 )
 from src.pagination import PaginatedResult, PaginationOptions
 
@@ -123,9 +124,14 @@ class Database:
 
         await self.session.commit()
 
+    async def get_system_metadata(self) -> SystemMetadataModel:
+        stmt = select(SystemMetadataModel)
+        return await self.session.scalar(stmt)
+
     async def _get_employee_by_id(self, id: int) -> EmployeeModel:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)
         return await self.session.scalar(stmt)
+
 
 
 T = TypeVar("T")
