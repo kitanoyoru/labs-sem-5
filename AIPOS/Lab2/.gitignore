@@ -36,3 +36,5 @@ node_modules/
 package.json
 package-lock.json
 
+infra/.terraform/
+infra/.terraform.lock.hcl
