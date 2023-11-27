@@ -68,21 +68,20 @@ def create_router(
         id: Optional[int] = Query(
             None,
             alias="id",
-            title="Administrator ID",
-            description="Filter administrator by id",
+            title="Employee ID",
+            description="Filter employee by id",
             example="12",
         ),
         full_name: Optional[str] = Query(
             None,
             alias="full_name",
-            title="Administrator Fullname",
-            description="Filter administrator by fullname",
+            title="Employee Fullname",
+            description="Filter employee by fullname",
             example="Ivan Prokopovich",
         ),
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ) -> list[EmployeeOut]:
-        print("here")
         try:
             return await service.get_employee_by_criteria(
                 administrator,
@@ -115,6 +114,31 @@ def create_router(
             full_name=full_name,
         )
 
+    @router.patch(
+        "/employee",
+        name="Patch employee model",
+        response_class=ORJSONResponse,
+    )
+    async def patch_employee(
+        id: Annotated[
+            int,
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ],
+        full_name: Annotated[
+            str,
+            Form(
+                title="Employee full name",
+                example="Ivan Prokopovich",
+            ),
+        ],
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.patch_employee(administrator, id=id, full_name=full_name)
+
     @router.post(
         "/employee/position",
         name="Assign new positon to the employee",
@@ -128,25 +152,17 @@ def create_router(
                 example="12",
             ),
         ],
-        position_name: Annotated[
-            str,
-            Form(
-                title="Employee position name",
-                example="Developer",
-            ),
-        ],
-        category_id: Annotated[
+        position_id: Annotated[
             int,
-            Form(title="Employee's positionn referenced category object", example="1"),
+            Form(title="Employee's position id", example="1"),
         ],
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
-        return await service.add_position_to_employee(
+        return await service.assign_position_to_employee(
             administrator,
             employee_id=employee_id,
-            position_name=position_name,
-            category_id=category_id,
+            position_id=position_id,
         )
 
     @router.delete(
@@ -189,16 +205,9 @@ def create_router(
         id: Optional[int] = Query(
             None,
             alias="id",
-            title="Employee ID",
-            description="Filter administrator by id",
+            title="Payment History ID",
+            description="Filter payment history by id",
             example="12",
-        ),
-        full_name: Optional[str] = Query(
-            None,
-            alias="full_name",
-            title="Employee Fullname",
-            description="Filter administrator by fullname",
-            example="Ivan Prokopovich",
         ),
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
@@ -222,7 +231,7 @@ def create_router(
         employee_id: Annotated[
             int,
             Form(
-                title="Employee d",
+                title="Employee id",
             ),
         ],
         month: Annotated[
@@ -235,7 +244,7 @@ def create_router(
         earnings: Annotated[
             int,
             Form(
-                title="Employee d",
+                title="Earnings",
             ),
         ],
         payments: Annotated[
@@ -273,8 +282,8 @@ def create_router(
         id: Optional[int] = Query(
             None,
             alias="id",
-            title="Employee ID",
-            description="Filter employee by id",
+            title="Payment History ID",
+            description="Delete payment history by id",
             example="12",
         ),
         service: Service = Depends(get_service),

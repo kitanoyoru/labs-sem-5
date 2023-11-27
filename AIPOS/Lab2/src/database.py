@@ -7,7 +7,7 @@ from sqlalchemy import Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import create_alembic_config
-from src.exceptions import EmployeeNotFoundException
+from src.exceptions import EmployeeNotFoundException, PositionNotFoundException
 from src.models.models import (
     AdministratorModel,
     CategoryModel,
@@ -85,18 +85,25 @@ class Database:
 
         return items
 
+    async def patch_employee(self, id: int, full_name: str):
+        employee = await self._get_employee_by_id(id)
+
+        employee.full_name = full_name
+
+        return await self.save_employee(employee)
+
     async def save_employee(self, employee: EmployeeModel):
         self.session.add(employee)
         await self.session.commit()
 
-    async def assign_position_to_employee(
-        self, employee_id: int, position: PositionModel
-    ):
-        employee = self.session.query(EmployeeModel).filter(
-            EmployeeModel.ID == employee_id
-        )
+    async def assign_position_to_employee(self, employee_id: int, position_id: int):
+        employee = await self.session.get(EmployeeModel, employee_id)
         if not employee:
             raise EmployeeNotFoundException(employee_id)
+
+        position = await self.session.get(PositionModel, position_id)
+        if not position:
+            raise PositionNotFoundException(position_id)
 
         employee.positions.append(position)
 
@@ -177,7 +184,7 @@ async def _paginate(
     )
 
 
-def reset_database(database_url: str):
+def reset_database(database_url: str, data_path: str):
     engine = sqlalchemy.create_engine(database_url)
 
     with engine.connect() as connection:
@@ -195,3 +202,9 @@ def reset_database(database_url: str):
         config, autogenerate=True, message="Auto-generated migration"
     )
     alembic.command.stamp(config, "base", purge=True)
+
+    with engine.connect() as connection:
+        with connection.begin():
+            with open(data_path, "r") as file:
+                sql_statements = file.read()
+                connection.execute(text(sql_statements))

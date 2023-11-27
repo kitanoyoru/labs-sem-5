@@ -69,19 +69,15 @@ class Service:
         self,
         admin: AdministratorModel,
         employee_id: int,
-        position_name: str,
-        category_id: int,
+        position_id: int,
     ):
-        position = PositionModel(
-            name=position_name,
-            category_id=category_id,
-        )
-
         employee = await self._database._get_employee_by_id(employee_id)
         if employee.administrator_id != admin.ID:
             raise AdministratorNotAllowedException(employee_id)
 
-        return await self._database.assign_position_to_employee(employee, position)
+        return await self._database.assign_position_to_employee(
+            employee_id, position_id
+        )
 
     async def get_employee_by_criteria(
         self, admin: AdministratorModel, filter: EmployeeFilter
@@ -96,6 +92,15 @@ class Service:
 
     async def delete_employee(self, filter: EmployeeFilter):
         return await self._database.delete_employee(filter)
+
+    async def patch_employee(self, admin: AdministratorModel, id: int, full_name: str):
+        result = await self._database.get_employee(filter=EmployeeFilter(ID=id))
+
+        for employee in result:
+            if employee.administrator_id != admin.ID:
+                raise AdministratorNotAllowedException(employee.ID)
+
+        return await self._database.patch_employee(id, full_name)
 
     async def get_employee_payment_history_by_criteria(
         self, admin: AdministratorModel, filter: PaymentHistoryFilter
@@ -115,11 +120,10 @@ class Service:
     async def save_payment_history(
         self, admin: AdministratorModel, employee_id: int, dto: SavePaymentHistoryDTO
     ):
-        employees = await self._database._get_employee_by_id(employee_id)
+        employee = await self._database._get_employee_by_id(employee_id)
 
-        for employee in employees:
-            if employee.administrator_id != admin.ID:
-                raise AdministratorNotAllowedException(employee.ID)
+        if employee.administrator_id != admin.ID:
+            raise AdministratorNotAllowedException(employee.ID)
 
         history = PaymentHistoryModel(
             employee_id=employee_id,

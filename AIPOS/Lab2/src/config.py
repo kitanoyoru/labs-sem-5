@@ -6,6 +6,8 @@ import alembic.config
 import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
+root_dir = pathlib.Path(__file__).parent
+
 
 @dataclass
 class Directories:
@@ -15,8 +17,6 @@ class Directories:
 
 
 def get_directories() -> Directories:
-    root_dir = pathlib.Path(__file__).parent
-
     return Directories(
         static=str(root_dir / "static"),
         templates=str(root_dir / "templates"),
@@ -26,6 +26,10 @@ def get_directories() -> Directories:
 
 def get_database_url() -> str:
     return f"postgresql+psycopg://{os.environ['DATABASE_URL']}"
+
+
+def get_database_file() -> str:
+    return str(root_dir / "migrations" / "data" / "data.sql")
 
 
 def create_engine_from_env() -> AsyncEngine:
