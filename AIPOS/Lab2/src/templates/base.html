@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ENG" data-bs-theme="dark">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}AIPOS Lab{% endblock %}</title>
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
-        rel="stylesheet" 
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
-        crossorigin="anonymous"
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
     />
     {% block extra_css %}{% endblock %}
   </head>
@@ -25,7 +25,7 @@
           aria-expanded="false"
           aria-label="Navigation ein-/ausblenden"
         >
-          <span class="navbar-toggler-icon"></span>            
+          <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="services">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -38,86 +38,85 @@
             </li>
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    GET
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a
-                        class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
-                        href="/employee_detail"
-                        >Employee</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
-                        href="/services/xdf3-json-schema-converter"
-                        >Payment History</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
-                        href="/services/xml-schema-converter"
-                        >System Metadata</a
-                      >
-                    </li>
-                </ul>
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                GET
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'get-employee' %}active{% endif %}"
+                    href="/services/get/employee"
+                    >Employee</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'get-employee' %}active{% endif %}"
+                    href="/services/get/payment_history"
+                    >Payment History</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'get-employee' %}active{% endif %}"
+                    href="/services/get/system_metadata"
+                    >System Metadata</a
+                  >
+                </li>
+              </ul>
             </li>
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    POST 
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a
-                        class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
-                        href="/employee_detail"
-                        >Employee</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
-                        href="/services/xdf3-json-schema-converter"
-                        >Payment History</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
-                        href="/services/xml-schema-converter"
-                        >System Metadata</a
-                      >
-                    </li>
-                </ul>
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                POST
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
+                    href="/employee_detail"
+                    >Employee</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
+                    href="/services/xdf3-json-schema-converter"
+                    >Payment History</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
+                    href="/services/xml-schema-converter"
+                    >System Metadata</a
+                  >
+                </li>
+              </ul>
             </li>
-
           </ul>
 
           <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="/login">Login</a>
+              <a class="nav-link" href="/login">Login</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    {% block header %}
-    <div class="container mb-5">
-      <div class="row justify-content-center mt-3">
-        <div
-          class="col-md-9 text-center mt-5 alert alert-light"
-          role="alert"
-        >
-          Diese Seite dient Testzwecken und ist kein produktives Produkt der FITKO.
-        </div>
-      </div>
-    </div>
-
-    {% endblock %} {% block content %}{% endblock %}
+    {% block header %} {% endblock %} {% block content %}{% endblock %}
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
@@ -128,4 +127,3 @@
     {% block extra_js %}{% endblock %}
   </body>
 </html>
-

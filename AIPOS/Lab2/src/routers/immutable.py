@@ -63,6 +63,12 @@ def create_router(
             "index.html", {"request": request, "route": "home"}
         )
 
+    @router.get("/services/get/employee", response_class=HTMLResponse)
+    def get_employee_form(request: Request):
+        return templates.TemplateResponse(
+            "get/employee/index.html", {"request": request, "route": "home"}
+        )
+
     @router.get("/employee/{employee_id}", response_class=HTMLResponse)
     async def get_employee_template(
         request: Request,

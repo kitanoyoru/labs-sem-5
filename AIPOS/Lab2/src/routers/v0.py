@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Annotated, Any, AsyncGenerator, Callable, Optional
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, status
 from fastapi.responses import ORJSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -32,7 +32,7 @@ def create_router(
     router = APIRouter()
 
     async def get_current_user(
-        token: Annotated[str, Depends(oauth2_scheme)],
+        token: Annotated[Optional[str], Depends(oauth2_scheme)],
         service: Service = Depends(get_service),
     ):
         credentials_exception = HTTPException(
@@ -82,6 +82,7 @@ def create_router(
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ) -> list[EmployeeOut]:
+        print("here")
         try:
             return await service.get_employee_by_criteria(
                 administrator,

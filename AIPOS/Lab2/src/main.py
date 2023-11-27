@@ -68,18 +68,16 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
                 service = Service.from_session(session)
                 yield service
 
-    immutable_router = create_immutable_router(get_service, templates)
-    app.include_router(immutable_router, tags=["Immutable"])
-
-    auth_router = create_auth_router(get_service)
-    app.include_router(auth_router, tags=["Auth"])
-
     api_router = create_api_router(get_service)
-    app.include_router(api_router, prefix="/api/v0", tags=["CRUD API"])
+    app.include_router(api_router, prefix="/api/v0", tags=["api"])
 
     internal_router = create_internal_router(get_service)
-    app.include_router(
-        internal_router, prefix="/api/v0/functions", tags=["Business API Functions"]
-    )
+    app.include_router(internal_router, prefix="/api/v0/functions", tags=["functions"])
+
+    auth_router = create_auth_router(get_service)
+    app.include_router(auth_router, tags=["auth"])
+
+    immutable_router = create_immutable_router(get_service, templates)
+    app.include_router(immutable_router, tags=["immutable"])
 
     return app
