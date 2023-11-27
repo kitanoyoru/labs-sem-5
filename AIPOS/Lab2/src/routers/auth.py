@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Annotated, Any, AsyncGenerator, Callable
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import ORJSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
 from passlib.context import CryptContext
@@ -32,7 +33,7 @@ def create_router(
 ) -> APIRouter:
     router = APIRouter()
 
-    @router.post("/token", response_model=Token)
+    @router.post("/token")
     async def login_administrator(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         service: Service = Depends(get_service),
@@ -49,7 +50,19 @@ def create_router(
         access_token = create_access_token(
             data={"sub": user.full_name}, expires_delta=access_token_expires
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+
+        response = ORJSONResponse(
+            {"access_token": access_token, "token_type": "bearer"}
+        )
+
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            expires=access_token_expires.total_seconds(),
+            httponly=True,
+        )
+
+        return response
 
     async def _authenticate_user(
         username: str, password: str, service: Service

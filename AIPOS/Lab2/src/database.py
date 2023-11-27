@@ -190,5 +190,8 @@ def reset_database(database_url: str):
 
     config = create_alembic_config(engine)
 
-    alembic.command.stamp(config, "base", purge=True)
     alembic.command.upgrade(config, "head")
+    alembic.command.revision(
+        config, autogenerate=True, message="Auto-generated migration"
+    )
+    alembic.command.stamp(config, "base", purge=True)

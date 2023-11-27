@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import jinja2
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request as StarletteRequest
 
 from src.config import create_engine_from_env, get_directories
 from src.routers.auth import create_router as create_auth_router
+from src.routers.immutable import create_router as create_immutable_router
 from src.routers.internal import create_router as create_internal_router
 from src.routers.v0 import create_router as create_api_router
 from src.service import Service
@@ -46,6 +49,11 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
     )
     app.add_middleware(CustomCORSMiddleware)
 
+    templates = Jinja2Templates(
+        directory=directories.templates,
+        undefined=jinja2.StrictUndefined,
+    )
+
     app.mount(
         "/static",
         StaticFiles(directory=directories.static),
@@ -59,6 +67,9 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
             async with session.begin():
                 service = Service.from_session(session)
                 yield service
+
+    immutable_router = create_immutable_router(get_service, templates)
+    app.include_router(immutable_router, tags=["Immutable"])
 
     auth_router = create_auth_router(get_service)
     app.include_router(auth_router, tags=["Auth"])
