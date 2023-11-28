@@ -83,7 +83,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def get_employee_payment_for_month(
-        id: str = Query(
+        employee_id: int = Query(
             ...,
             alias="employee_id",
             title="Requested employee",
@@ -101,7 +101,7 @@ def create_router(
         return await service.get_employee_payment_history_by_criteria(
             administrator,
             filter=PaymentHistoryFilter(
-                ID=id,
+                employee_id=employee_id,
                 month=month,
             ),
         )

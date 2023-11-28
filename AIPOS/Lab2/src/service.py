@@ -146,5 +146,5 @@ class Service:
         return SystemMetadataOut.from_model(system_metadata)
 
     async def get_categories_for_current_date(self) -> list[CategoryOut]:
-        categories = await self._database.get_categories_for_current_date
+        categories = await self._database.get_categories_for_current_date()
         return [CategoryOut.from_model(category) for category in categories]

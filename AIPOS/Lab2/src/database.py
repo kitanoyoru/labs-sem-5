@@ -35,6 +35,7 @@ class EmployeeFilter:
 @dataclass(frozen=True)
 class PaymentHistoryFilter:
     ID: int | None = None
+    employee_id: int | None = None
     month: MonthEnum | None = None
 
 
@@ -117,8 +118,11 @@ class Database:
         if filter.ID is not None:
             stmt = stmt.where(PaymentHistoryModel.ID == filter.ID)
 
+        if filter.employee_id is not None:
+            stmt = stmt.where(PaymentHistoryModel.employee_id == filter.employee_id)
+
         if filter.month is not None:
-            stmt = stmt.where(PaymentHistoryModel.month == filter.month)
+            stmt = stmt.where(PaymentHistoryModel.month == filter.month.value)
 
         results = await self.session.scalars(stmt)
         items = list(results.all())
