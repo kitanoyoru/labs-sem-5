@@ -77,8 +77,8 @@ class Database:
         if filter.ID is not None:
             stmt = stmt.where(EmployeeModel.ID == filter.ID)
 
-        #if filter.full_name is not None:
-        #    stmt = stmt.where(EmployeeModel.full_name.ilike(filter.full_name))
+        if filter.full_name is not None:
+            stmt = stmt.where(EmployeeModel.full_name.ilike(filter.full_name))
 
         results = await self.session.scalars(stmt)
         items = list(results.all())
@@ -115,7 +115,7 @@ class Database:
         stmt = select(PaymentHistoryModel)
 
         if filter.ID is not None:
-            stmt = stmt.where(PaymentHistoryModel.employee_id == filter.ID)
+            stmt = stmt.where(PaymentHistoryModel.ID == filter.ID)
 
         if filter.month is not None:
             stmt = stmt.where(PaymentHistoryModel.month == filter.month)

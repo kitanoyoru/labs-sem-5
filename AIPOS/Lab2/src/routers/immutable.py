@@ -87,6 +87,36 @@ def create_router(
             "get/system_metadata/index.html", {"request": request, "route": "home"}
         )
 
+    @router.get("/services/post/employee", response_class=HTMLResponse)
+    def post_employee_form(request: Request):
+        return templates.TemplateResponse(
+            "post/employee/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/post/payment_history", response_class=HTMLResponse)
+    def post_payment_history_form(request: Request):
+        return templates.TemplateResponse(
+            "post/payment_history/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/delete/employee", response_class=HTMLResponse)
+    def delete_employee_form(request: Request):
+        return templates.TemplateResponse(
+            "delete/employee/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/delete/payment_history", response_class=HTMLResponse)
+    def delete_payment_history_form(request: Request):
+        return templates.TemplateResponse(
+            "delete/payment_history/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/patch/employee", response_class=HTMLResponse)
+    def patch_payment_history_form(request: Request):
+        return templates.TemplateResponse(
+            "patch/employee/index.html", {"request": request, "route": "home"}
+        )
+
     @router.get("/employee/{employee_id}", response_class=HTMLResponse)
     async def get_employee_template(
         request: Request,

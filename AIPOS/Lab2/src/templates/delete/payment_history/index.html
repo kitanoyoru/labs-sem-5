@@ -1,19 +1,14 @@
-{% extends "base.html" %} {% block title %}Get employee{% endblock %} {% block
+{% extends "base.html" %} {% block title %}Payment History{% endblock %} {% block
 content %}
 <div class="h-100 d-flex align-items-center">
   <main class="m-100 m-auto" style="max-width: 500px">
-    <form action="/api/v0/employee" method="GET">
-      <legend class="text-center">Get employee</legend>
-      <p>Get employee by requested parameters</p>
+    <form action="/api/v0/delete_payment_history" method="POST">
+      <legend class="text-center">Delete payment history</legend>
+      <p>Delete payment history by requested parameters</p>
 
       <div class="mb-3">
         <label for="schema">ID:</label>
         <input class="form-control" name="id" id="schema" />
-      </div>
-      <p></p>
-      <div class="mb-3">
-        <label for="full_name"> Fullname </label>
-        <input class="form-control" name="full_name" id="full_name" />
       </div>
 
       <button class="btn btn-primary w-100 py-2 mt-3" type="submit">

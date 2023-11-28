@@ -2,17 +2,17 @@
 content %}
 <div class="h-100 d-flex align-items-center">
   <main class="m-100 m-auto" style="max-width: 500px">
-    <form action="/api/v0/employee" method="GET">
-      <legend class="text-center">Get employee</legend>
-      <p>Get employee by requested parameters</p>
+    <form action="/api/v0/employee" method="PATCH">
+      <legend class="text-center">Patch employee</legend>
+      <p>Patch employee by requested parameters</p>
 
       <div class="mb-3">
-        <label for="schema">ID:</label>
-        <input class="form-control" name="id" id="schema" />
+        <label for="id">ID:</label>
+        <input class="form-control" name="id" id="id" />
       </div>
       <p></p>
       <div class="mb-3">
-        <label for="full_name"> Fullname </label>
+        <label for="full_name">Fullname:</label>
         <input class="form-control" name="full_name" id="full_name" />
       </div>
 

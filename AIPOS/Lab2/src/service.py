@@ -108,11 +108,10 @@ class Service:
         histories = await self._database.get_history(filter)
 
         for history in histories:
-            employees = await self._database._get_employee_by_id(
+            employee = await self._database._get_employee_by_id(
                 history.employee_id,
             )
-            for employee in employees:
-                if employee.administrator_id != admin.ID:
+            if employee.administrator_id != admin.ID:
                     raise AdministratorNotAllowedException(employee.ID)
 
         return [PaymentHistoryOut.from_model(model) for model in histories]

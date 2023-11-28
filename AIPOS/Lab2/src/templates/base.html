@@ -33,7 +33,7 @@
               <a
                 class="nav-link {% if route == 'home' %}active{% endif %}"
                 href="/"
-                >AIPOS Lab</a
+                >DB Lab</a
               >
             </li>
 
@@ -57,14 +57,14 @@
                 </li>
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'get-employee' %}active{% endif %}"
+                    class="dropdown-item {% if route == 'get-payment-history' %}active{% endif %}"
                     href="/services/get/payment_history"
                     >Payment History</a
                   >
                 </li>
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'get-employee' %}active{% endif %}"
+                    class="dropdown-item {% if route == 'get-system-metadata' %}active{% endif %}"
                     href="/services/get/system_metadata"
                     >System Metadata</a
                   >
@@ -85,23 +85,16 @@
               <ul class="dropdown-menu">
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
-                    href="/employee_detail"
+                    class="dropdown-item {% if route == 'post-employee' %}active{% endif %}"
+                    href="/services/post/employee"
                     >Employee</a
                   >
                 </li>
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
-                    href="/services/xdf3-json-schema-converter"
+                    class="dropdown-item {% if route == 'post-payment-history' %}active{% endif %}"
+                    href="/services/post/payment_history"
                     >Payment History</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
-                    href="/services/xml-schema-converter"
-                    >System Metadata</a
                   >
                 </li>
               </ul>
@@ -120,23 +113,16 @@
               <ul class="dropdown-menu">
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
-                    href="/employee_detail"
+                    class="dropdown-item {% if route == 'delete-employee' %}active{% endif %}"
+                    href="/services/delete/employee"
                     >Employee</a
                   >
                 </li>
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
-                    href="/services/xdf3-json-schema-converter"
+                    class="dropdown-item {% if route == 'delete-payment-history' %}active{% endif %}"
+                    href="/services/delete/payment_history"
                     >Payment History</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
-                    href="/services/xml-schema-converter"
-                    >System Metadata</a
                   >
                 </li>
               </ul>
@@ -158,20 +144,6 @@
                     class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
                     href="/employee_detail"
                     >Employee</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item {% if route == 'xdf3-json-converter' %}active{% endif %}"
-                    href="/services/xdf3-json-schema-converter"
-                    >Payment History</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item {% if route == 'xml-converter' %}active{% endif %}"
-                    href="/services/xml-schema-converter"
-                    >System Metadata</a
                   >
                 </li>
               </ul>

@@ -143,7 +143,10 @@ def create_router(
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
-        return await service.patch_employee(administrator, id=id, full_name=full_name)
+        try:
+            return await service.patch_employee(administrator, id=id, full_name=full_name)
+        except AdministratorNotAllowedException as exc:
+            return HTTPException(status_code=405, detail=str(exc))
 
     @router.post(
         "/employee/position",
@@ -172,27 +175,27 @@ def create_router(
             position_id=position_id,
         )
 
-    @router.delete(
-        "/employee",
+    @router.post(
+        "/delete_employee",
         name="Delete employee model",
         response_class=ORJSONResponse,
     )
     async def delete_employee(
         request: Request,
-        id: Optional[int] = Query(
-            None,
-            alias="id",
-            title="Employee ID",
-            description="Filter employee by id",
-            example="12",
-        ),
-        full_name: Optional[str] = Query(
-            None,
-            alias="full_name",
-            title="Employee Fullname",
-            description="Filter employee by fullname",
-            example="Ivan Prokopovich",
-        ),
+        id: Annotated[
+            int,
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ],
+        full_name: Annotated[
+            Optional[str],
+            Form(
+                title="Employee full name",
+                example="Ivan Prokopovich",
+            ),
+        ] = None,
         service: Service = Depends(get_service),
         current_user: AdministratorModel = Depends(get_current_user),
     ):
@@ -217,6 +220,13 @@ def create_router(
             title="Payment History ID",
             description="Filter payment history by id",
             example="12",
+        ),
+        month: Optional[int] = Query(
+            None,
+            alias="month",
+            title="Payment History Month",
+            description="Filter payment history by month",
+            example="January",
         ),
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
@@ -283,20 +293,20 @@ def create_router(
             ),
         )
 
-    @router.delete(
-        "/payment_history",
+    @router.post(
+        "/delete_payment_history",
         name="Delete payment history model",
         response_class=ORJSONResponse,
     )
     async def delete_payment_history(
         request: Request,
-        id: Optional[int] = Query(
-            None,
-            alias="id",
-            title="Payment History ID",
-            description="Delete payment history by id",
-            example="12",
-        ),
+        id: Annotated[
+            int,
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ],
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
