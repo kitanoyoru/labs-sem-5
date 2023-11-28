@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Annotated, Any, AsyncGenerator, Callable
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import ORJSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -45,6 +45,7 @@ def create_router(
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             username: str = payload.get("sub")
@@ -61,6 +62,7 @@ def create_router(
 
         if user is None:
             raise credentials_exception
+
         return user
 
     @router.get(

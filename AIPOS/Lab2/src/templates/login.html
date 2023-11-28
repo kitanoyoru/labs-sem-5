@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block
+content %}
+<div class="h-100 d-flex align-items-center">
+  <main class="m-100 m-auto" style="max-width: 500px">
+    <form action="/token" method="POST">
+      <legend class="text-center">Administrator Login</legend>
+
+      <div class="mb-3">
+        <label for="schema">Username:</label>
+        <input class="form-control" name="username" id="username" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="full_name">Password:</label>
+        <input class="form-control" name="password" id="password" />
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+        Submit
+      </button>
+    </form>
+  </main>
+</div>
+{% endblock %}
+

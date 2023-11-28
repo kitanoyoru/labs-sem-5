@@ -19,8 +19,6 @@ SECRET_KEY = os.environ["AUTH_SECRET_KEY"]
 ALGORITHM = os.environ["AUTH_ALGORITHM"]
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"])
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 class TokenData(BaseModel):
     username: str | None = None
@@ -32,7 +30,7 @@ def create_router(
     router = APIRouter()
 
     async def get_current_user(
-        token: Annotated[Optional[str], Depends(oauth2_scheme)],
+        request: Request,
         service: Service = Depends(get_service),
     ):
         credentials_exception = HTTPException(
@@ -40,6 +38,11 @@ def create_router(
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+        token = request.cookies.get("access_token")
+        if not token:
+            raise credentials_exception
+
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             username: str = payload.get("sub")
@@ -65,6 +68,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def get_employee(
+        request: Request,
         id: Optional[int] = Query(
             None,
             alias="id",
@@ -99,6 +103,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def add_employee(
+        request: Request,
         full_name: Annotated[
             str,
             Form(
@@ -120,6 +125,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def patch_employee(
+        request: Request,
         id: Annotated[
             int,
             Form(
@@ -145,6 +151,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def assign_position_to_employee(
+        request: Request,
         employee_id: Annotated[
             int,
             Form(
@@ -171,6 +178,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def delete_employee(
+        request: Request,
         id: Optional[int] = Query(
             None,
             alias="id",
@@ -202,6 +210,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def get_employee_payment_history(
+        request: Request,
         id: Optional[int] = Query(
             None,
             alias="id",
@@ -227,7 +236,8 @@ def create_router(
         name="Add payment history model",
         response_class=ORJSONResponse,
     )
-    async def add_payment_historyck(
+    async def add_payment_history(
+        request: Request,
         employee_id: Annotated[
             int,
             Form(
@@ -279,6 +289,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def delete_payment_history(
+        request: Request,
         id: Optional[int] = Query(
             None,
             alias="id",
@@ -301,6 +312,7 @@ def create_router(
         response_class=ORJSONResponse,
     )
     async def get_system_metadata(
+        request: Request,
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):

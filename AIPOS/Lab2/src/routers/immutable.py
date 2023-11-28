@@ -63,10 +63,28 @@ def create_router(
             "index.html", {"request": request, "route": "home"}
         )
 
+    @router.get("/login", response_class=HTMLResponse)
+    def login(request: Request):
+        return templates.TemplateResponse(
+            "login.html", {"request": request, "route": "home"}
+        )
+
     @router.get("/services/get/employee", response_class=HTMLResponse)
     def get_employee_form(request: Request):
         return templates.TemplateResponse(
             "get/employee/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/get/payment_history", response_class=HTMLResponse)
+    def get_payment_history_form(request: Request):
+        return templates.TemplateResponse(
+            "get/payment_history/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/get/system_metadata", response_class=HTMLResponse)
+    def get_system_metadata_form(request: Request):
+        return templates.TemplateResponse(
+            "get/system_metadata/index.html", {"request": request, "route": "home"}
         )
 
     @router.get("/employee/{employee_id}", response_class=HTMLResponse)
