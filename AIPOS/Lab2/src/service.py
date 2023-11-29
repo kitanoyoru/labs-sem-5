@@ -112,7 +112,7 @@ class Service:
                 history.employee_id,
             )
             if employee.administrator_id != admin.ID:
-                    raise AdministratorNotAllowedException(employee.ID)
+                raise AdministratorNotAllowedException(employee.ID)
 
         return [PaymentHistoryOut.from_model(model) for model in histories]
 

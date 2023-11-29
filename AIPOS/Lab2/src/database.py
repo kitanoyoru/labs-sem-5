@@ -32,11 +32,15 @@ class EmployeeFilter:
     full_name: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class PaymentHistoryFilter:
     ID: int | None = None
     employee_id: int | None = None
     month: MonthEnum | None = None
+
+    def __post_init__(self):
+        if isinstance(self.month, str):
+            self.month = MonthEnum[self.month]
 
 
 class Database:

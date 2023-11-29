@@ -2,15 +2,19 @@
 block content %}
 <div class="h-100 d-flex align-items-center">
   <main class="m-100 m-auto" style="max-width: 500px">
-    <form action="/api/v0/payment_history" method="GET">
+    <form action="/api/v0/get_payment_history" method="POST">
       <legend class="text-center">Get payment history</legend>
       <p>Get payment history by requested parameters</p>
 
       <div class="mb-3">
-        <label for="schema">ID:</label>
+        <label for="id">ID:</label>
         <input class="form-control" name="id" id="id" />
       </div>
       <p></p>
+      <div class="mb-3">
+        <label for="moth">Month:</label>
+        <input class="form-control" name="month" id="month" />
+      </div>
 
       <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
         Submit

@@ -61,28 +61,28 @@ def create_router(
             raise credentials_exception
         return user
 
-    @router.get(
-        "/employee",
+    @router.post(
+        "/get_employee",
         name="Get employee model",
         description="Get employee according to the specified query",
         response_class=ORJSONResponse,
     )
     async def get_employee(
         request: Request,
-        id: Optional[int] = Query(
-            None,
-            alias="id",
-            title="Employee ID",
-            description="Filter employee by id",
-            example="12",
-        ),
-        full_name: Optional[str] = Query(
-            None,
-            alias="full_name",
-            title="Employee Fullname",
-            description="Filter employee by fullname",
-            example="Ivan Prokopovich",
-        ),
+        id: Annotated[
+            Optional[int],
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ] = None,
+        full_name: Annotated[
+            Optional[str],
+            Form(
+                title="Employee full name",
+                example="Ivan Prokopovich",
+            ),
+        ] = None,
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ) -> list[EmployeeOut]:
@@ -119,8 +119,8 @@ def create_router(
             full_name=full_name,
         )
 
-    @router.patch(
-        "/employee",
+    @router.post(
+        "/patch_employee",
         name="Patch employee model",
         response_class=ORJSONResponse,
     )
@@ -144,7 +144,9 @@ def create_router(
         administrator: AdministratorModel = Depends(get_current_user),
     ):
         try:
-            return await service.patch_employee(administrator, id=id, full_name=full_name)
+            return await service.patch_employee(
+                administrator, id=id, full_name=full_name
+            )
         except AdministratorNotAllowedException as exc:
             return HTTPException(status_code=405, detail=str(exc))
 
@@ -206,28 +208,30 @@ def create_router(
             )
         )
 
-    @router.get(
-        "/payment_history",
+    @router.post(
+        "/get_payment_history",
         name="Get employee payment history",
         description="Get employee according to the specified query",
         response_class=ORJSONResponse,
     )
     async def get_employee_payment_history(
         request: Request,
-        id: Optional[int] = Query(
-            None,
-            alias="id",
-            title="Payment History ID",
-            description="Filter payment history by id",
-            example="12",
-        ),
-        month: Optional[int] = Query(
-            None,
-            alias="month",
-            title="Payment History Month",
-            description="Filter payment history by month",
-            example="January",
-        ),
+        id: Annotated[
+            int,
+            Form(
+                title="Payment history id",
+                example="12",
+            ),
+        ] = None,
+        month: Annotated[
+            str,
+            Form(
+                alias="month",
+                title="Payment History Month",
+                description="Filter payment history by month",
+                example="January",
+            ),
+        ] = None,
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ) -> list[PaymentHistoryOut]:
@@ -236,6 +240,7 @@ def create_router(
                 administrator,
                 filter=PaymentHistoryFilter(
                     ID=id,
+                    month=month,
                 ),
             )
         except AdministratorNotAllowedException as exc:
