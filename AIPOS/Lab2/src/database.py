@@ -162,7 +162,7 @@ class Database:
 
     async def get_categories_for_current_date(self) -> list[CategoryModel]:
         stmt = select(CategoryModel).where(
-            CategoryModel.change_date == func.current_date()
+            CategoryModel.change_date <= func.current_date()
         )
 
         results = await self.session.scalars(stmt)

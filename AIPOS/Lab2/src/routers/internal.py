@@ -15,7 +15,7 @@ from src.models.models import (
     EmployeeOut,
     PaymentHistoryOut,
 )
-from src.service import MinEmployeeSalaryDTO, Service
+from src.service import MinEmployeeSalaryDTO, Service, EmployeePaymentForMonthDTO
 from src.shared.enums import MonthEnum
 
 logger = logging.getLogger(__file__)
@@ -105,13 +105,11 @@ def create_router(
         ],
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
-    ) -> list[PaymentHistoryOut]:
-        return await service.get_employee_payment_history_by_criteria(
+    ) -> EmployeePaymentForMonthDTO:
+        return await service.get_employee_payment_for_month(
             administrator,
-            filter=PaymentHistoryFilter(
-                employee_id=employee_id,
-                month=month,
-            ),
+            employee_id=employee_id,
+            month=month,
         )
 
     @router.post(

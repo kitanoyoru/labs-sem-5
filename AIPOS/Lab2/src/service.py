@@ -36,6 +36,12 @@ class SavePaymentHistoryDTO:
     deductions: int
 
 
+class EmployeePaymentForMonthDTO(BaseModel):
+    employee: EmployeeOut
+    positions: list[PositionOut]
+    payment_histories: list[PaymentHistoryOut]
+
+
 class MinEmployeeSalaryDTO(BaseModel):
     employee: EmployeeOut
     positions: list[PositionOut]
@@ -158,7 +164,7 @@ class Service:
 
     async def get_employees_with_min_salary_for_month(
         self, admin: AdministratorModel, month: MonthEnum
-    ) -> list[EmployeeOut]:
+    ) -> list[MinEmployeeSalaryDTO]:
         employees = await self._database.get_employees_with_min_salary_for_month(month)
 
         result: list[MinEmployeeSalaryDTO] = []
@@ -185,3 +191,29 @@ class Service:
             )
 
         return result
+
+    async def get_employee_payment_for_month(
+            self, admin: AdministratorModel, employee_id, month: MonthEnum
+    ) -> EmployeePaymentForMonthDTO:
+        employee = await self._database._get_employee_by_id(employee_id)
+        if employee.administrator_id != admin.ID:
+            raise AdministratorNotAllowedException(employee_id)
+
+        empl_out = EmployeeOut.from_model(employee)
+
+        positions = [
+            PositionOut.from_model(model)
+            for model in await self._database.get_employee_positions(employee.ID)
+        ]
+        histories = [
+            PaymentHistoryOut.from_model(model)
+            for model in await self._database.get_history(
+                filter=PaymentHistoryFilter(employee_id=employee.ID)
+            )
+        ]
+
+        return EmployeePaymentForMonthDTO(
+            employee=empl_out,
+            positions=positions,
+            payment_histories=histories,
+        )
