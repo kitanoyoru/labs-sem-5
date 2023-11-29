@@ -148,3 +148,9 @@ class Service:
     async def get_categories_for_current_date(self) -> list[CategoryOut]:
         categories = await self._database.get_categories_for_current_date()
         return [CategoryOut.from_model(category) for category in categories]
+
+    async def get_employees_with_min_salary_for_month(
+        self, admin: AdministratorModel, month: MonthEnum
+    ) -> list[str]:
+        result = await self._database.get_employees_with_min_salary_for_month(month)
+        return result

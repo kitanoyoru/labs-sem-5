@@ -3,7 +3,7 @@ from typing import Tuple, TypeVar
 
 import alembic.command
 import sqlalchemy
-from sqlalchemy import Select, func, select, text
+from sqlalchemy import ScalarResult, Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import create_alembic_config
@@ -158,6 +158,27 @@ class Database:
         items = list(results.all())
 
         return items
+
+    async def get_employees_with_min_salary_for_month(
+        self, month: MonthEnum
+    ) -> list[str]:
+        result: ScalarResult[str] = await self.session.scalars(
+            text(
+            '''
+            SELECT e.full_name
+            FROM employee AS e
+                     INNER JOIN (SELECT ph.employee_id
+                                 FROM payment_history AS ph
+                                 WHERE ph.month = :month
+                                 GROUP BY ph.employee_id
+                                 ORDER BY SUM(ph.earnings) DESC
+                                 LIMIT 1) AS top_employee ON e."ID" = top_employee.employee_id;
+            '''
+            ),
+            {"month": month.value},
+        )
+
+        return result.all()
 
     async def _get_employee_by_id(self, id: int) -> EmployeeModel:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)

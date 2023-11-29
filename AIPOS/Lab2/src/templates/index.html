@@ -2,43 +2,68 @@
 %}
 <center class="mt-5">
   <main class="mt-4">
-    <h2 class="mt-5">Business functions</h2>
-    <div class="d-flex w-50 align-items-center justify-content-between">
-        <div class="h-100 mt-5 d-flex align-items-center">
-          <main class="m-100 m-auto" style="max-width: 500px">
-            <form action="/api/v0/functions/categories_for_current_date" method="GET">
-              <legend class="text-center">Get categories for the current date</legend>
-              <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
-                Submit
-              </button>
-            </form>
-          </main>
-        </div>
-        <div class="h-100 mt-5 d-flex align-items-center">
-          <main class="m-100 m-auto" style="max-width: 500px">
-            <form action="/api/v0/functions/employee_payments_for_month" method="GET">
-              <legend class="text-center">Get user's payments for month</legend>
-              <div class="mb-3">
-                <label for="employee_id">Employee ID</label>
-                <input class="form-control" name="employee_id" id="employee_id" />
-              </div>
-              <p></p>
-              <div class="mb-3">
-                <label for="month">Month</label>
-                <input class="form-control" name="month" id="month" />
-              </div>
-              <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
-                Submit
-              </button>
-            </form>
-          </main>
-        </div>
+    <h2 class="mt-5 mb-5">Business functions</h2>
+    <div class="d-flex w-50 m align-items-center">
+      <div class="h-100 m-5 d-flex align-items-center">
+        <main class="m-100 m-auto" style="max-width: 500px">
+          <form
+            action="/api/v0/functions/categories_for_current_date"
+            method="GET"
+          >
+            <legend class="text-center">
+              Get categories for the current date
+            </legend>
+            <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+              Submit
+            </button>
+          </form>
+        </main>
+      </div>
+      <div class="h-100 d-flex align-items-center">
+        <main class="m-100 m-auto" style="max-width: 500px">
+          <form
+            action="/api/v0/functions/employee_payments_for_month"
+            method="POST"
+          >
+            <legend class="text-center">Get user's payments for month</legend>
+            <div class="mb-3">
+              <label for="employee_id">Employee ID</label>
+              <input class="form-control" name="employee_id" id="employee_id" />
+            </div>
+            <p></p>
+            <div class="mb-3">
+              <label for="month">Month</label>
+              <input class="form-control" name="month" id="month" />
+            </div>
+            <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+              Submit
+            </button>
+          </form>
+        </main>
+      </div>
+      <div class="h-100 m-5 d-flex align-items-center">
+        <main class="m-100 m-auto" style="max-width: 500px">
+          <form
+            action="/api/v0/functions/get_employees_with_min_salary_for_month"
+            method="POST"
+          >
+            <legend class="text-center">Get employee with min salary for the month</legend>
+            <div class="mb-3">
+              <label for="month">Month</label>
+              <input class="form-control" name="month" id="month" />
+            </div>
+            <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+              Submit
+            </button>
+          </form>
+        </main>
+      </div>
     </div>
   </main>
   <footer class="footer fixed-bottom mb-4">
-      Python task solution. Developped by
-      <b>kitanoyoru</b>. You can find source code here
-      <a href="https://github.com/kitanoyoru">GitHub</a>
+    Python task solution. Developped by
+    <b>kitanoyoru</b>. You can find source code here
+    <a href="https://github.com/kitanoyoru">GitHub</a>
   </footer>
 </center>
 {% endblock %}

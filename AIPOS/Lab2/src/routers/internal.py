@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Annotated, Any, AsyncGenerator, Callable
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, status
 from fastapi.responses import ORJSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -79,7 +79,7 @@ def create_router(
     ) -> list[CategoryOut]:
         return await service.get_categories_for_current_date()
 
-    @router.get(
+    @router.post(
         "/employee_payments_for_month",
         name="Employee payments for month",
         description="Get employee's payments for specific month",
@@ -87,18 +87,22 @@ def create_router(
     )
     async def get_employee_payment_for_month(
         request: Request,
-        employee_id: int = Query(
-            ...,
-            alias="employee_id",
-            title="Requested employee",
-            example="123",
-        ),
-        month: MonthEnum = Query(
-            ...,
-            alias="month",
-            title="Requested month",
-            example="January",
-        ),
+        employee_id: Annotated[
+            int,
+            Form(
+                alias="employee_id",
+                title="Requested employee",
+                example="123",
+            ),
+        ],
+        month: Annotated[
+            MonthEnum,
+            Form(
+                alias="month",
+                title="Requested month",
+                example="January",
+            ),
+        ],
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ) -> list[PaymentHistoryOut]:
@@ -108,6 +112,30 @@ def create_router(
                 employee_id=employee_id,
                 month=month,
             ),
+        )
+
+    @router.post(
+        "/get_employees_with_min_salary_for_month",
+        name="Employee with min salary for the month",
+        description="Get employee with min salary for the month",
+        response_class=ORJSONResponse,
+    )
+    async def get_employees_with_min_salary_for_month(
+        request: Request,
+        month: Annotated[
+            MonthEnum,
+            Form(
+                alias="month",
+                title="Requested month",
+                example="January",
+            ),
+        ],
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ) -> list[str]:
+        return await service.get_employees_with_min_salary_for_month(
+            administrator,
+            month=month,
         )
 
     return router

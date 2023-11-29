@@ -117,30 +117,4 @@ def create_router(
             "patch/employee/index.html", {"request": request, "route": "home"}
         )
 
-    @router.get("/employee/{employee_id}", response_class=HTMLResponse)
-    async def get_employee_template(
-        request: Request,
-        employee_id,
-        service: Service = Depends(get_service),
-        administrator: AdministratorModel = Depends(get_current_user),
-    ):
-        try:
-            employees = await service.get_employee_by_criteria()
-            assert len(employees) == 1
-        except AssertionError:
-            return templates.TemplateResponse("404.html")
-
-        return templates.TemplateResponse(
-            "employee_detail.html",
-            {"request": request, "employee": employees[0], "route": "home"},
-        )
-
-    @router.get("/payment_history")
-    def get_paymeny_history_form():
-        ...
-
-    @router.get("/system_metadata")
-    def get_system_metadata_form():
-        ...
-
     return router
