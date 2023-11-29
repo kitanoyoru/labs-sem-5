@@ -60,7 +60,7 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
         name="static",
     )
 
-    SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    SessionLocal = async_sessionmaker(expire_on_commit=False, bind=engine)
 
     async def get_service():
         async with SessionLocal() as session:

@@ -5,6 +5,7 @@ import alembic.command
 import sqlalchemy
 from sqlalchemy import ScalarResult, Select, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased, joinedload
 
 from src.config import create_alembic_config
 from src.exceptions import EmployeeNotFoundException, PositionNotFoundException
@@ -12,6 +13,7 @@ from src.models.models import (
     AdministratorModel,
     CategoryModel,
     EmployeeModel,
+    EmployeePositionTable,
     PaymentHistoryModel,
     PositionModel,
     SystemMetadataModel,
@@ -114,6 +116,15 @@ class Database:
 
         await self.session.commit()
 
+    async def get_employee_positions(self, employee_id: int) -> list[EmployeeModel]:
+        stmt = (
+            select(EmployeeModel)
+            .where(EmployeeModel.ID == employee_id)
+            .options(joinedload(EmployeeModel.positions))
+        )
+        employee = await self.session.scalar(stmt)
+        return employee.positions
+
     async def get_history(
         self, filter: PaymentHistoryFilter
     ) -> list[PaymentHistoryModel]:
@@ -161,24 +172,26 @@ class Database:
 
     async def get_employees_with_min_salary_for_month(
         self, month: MonthEnum
-    ) -> list[str]:
-        result: ScalarResult[str] = await self.session.scalars(
-            text(
-            '''
-            SELECT e.full_name
-            FROM employee AS e
-                     INNER JOIN (SELECT ph.employee_id
-                                 FROM payment_history AS ph
-                                 WHERE ph.month = :month
-                                 GROUP BY ph.employee_id
-                                 ORDER BY SUM(ph.earnings) DESC
-                                 LIMIT 1) AS top_employee ON e."ID" = top_employee.employee_id;
-            '''
-            ),
-            {"month": month.value},
+    ) -> list[EmployeeModel]:
+        e = aliased(EmployeeModel)
+        ph = aliased(PaymentHistoryModel)
+
+        subquery = (
+            select(ph.employee_id)
+            .where(ph.month == month.value)
+            .group_by(ph.employee_id)
+            .order_by(func.sum(ph.earnings).desc())
+            .limit(1)
+            .subquery()
         )
 
-        return result.all()
+        query = select(e).where(e.ID == subquery.c.employee_id)
+
+        result = await self.session.execute(query)
+
+        rows = result.fetchall()
+
+        return [row[0] for row in rows]
 
     async def _get_employee_by_id(self, id: int) -> EmployeeModel:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)

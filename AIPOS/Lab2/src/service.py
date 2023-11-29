@@ -3,6 +3,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
@@ -22,17 +23,23 @@ from src.models.models import (
     PaymentHistoryModel,
     PaymentHistoryOut,
     PositionModel,
+    PositionOut,
     SystemMetadataOut,
 )
 from src.shared.enums import MonthEnum
 
 
-@dataclass(frozen=True)
 class SavePaymentHistoryDTO:
     month: str
     earnings: int
     payments: int
     deductions: int
+
+
+class MinEmployeeSalaryDTO(BaseModel):
+    employee: EmployeeOut
+    positions: list[PositionOut]
+    payment_histories: list[PaymentHistoryOut]
 
 
 class Service:
@@ -151,6 +158,30 @@ class Service:
 
     async def get_employees_with_min_salary_for_month(
         self, admin: AdministratorModel, month: MonthEnum
-    ) -> list[str]:
-        result = await self._database.get_employees_with_min_salary_for_month(month)
+    ) -> list[EmployeeOut]:
+        employees = await self._database.get_employees_with_min_salary_for_month(month)
+
+        result: list[MinEmployeeSalaryDTO] = []
+        for employee in employees:
+            empl_out = EmployeeOut.from_model(employee)
+
+            positions = [
+                PositionOut.from_model(model)
+                for model in await self._database.get_employee_positions(employee.ID)
+            ]
+            histories = [
+                PaymentHistoryOut.from_model(model)
+                for model in await self._database.get_history(
+                    filter=PaymentHistoryFilter(employee_id=employee.ID)
+                )
+            ]
+
+            result.append(
+                MinEmployeeSalaryDTO(
+                    employee=empl_out,
+                    positions=positions,
+                    payment_histories=histories,
+                )
+            )
+
         return result

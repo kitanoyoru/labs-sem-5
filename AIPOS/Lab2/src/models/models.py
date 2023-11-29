@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import (
@@ -46,7 +47,7 @@ class AdministratorOut(BaseModel):
         return AdministratorOut.model_validate(administrator)
 
 
-employee_position_table = Table(
+EmployeePositionTable = Table(
     "employee_position",
     Base.metadata,
     Column(
@@ -75,21 +76,10 @@ class EmployeeModel(Base):
     administrator = relationship("AdministratorModel", back_populates="employee")
 
     positions = relationship(
-        "PositionModel", secondary=employee_position_table, backref="employee"
+        "PositionModel", secondary=EmployeePositionTable, backref="employee"
     )
 
     payment_history = relationship("PaymentHistoryModel", back_populates="employee")
-
-
-class EmployeeOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    ID: int
-    full_name: str
-
-    @staticmethod
-    def from_model(employee: EmployeeModel) -> EmployeeModel:
-        return EmployeeOut.model_validate(employee)
 
 
 class CategoryModel(Base):
@@ -125,8 +115,20 @@ class PositionModel(Base):
     category = relationship("CategoryModel", back_populates="position")
 
     employees = relationship(
-        "EmployeeModel", secondary=employee_position_table, backref="position"
+        "EmployeeModel", secondary=EmployeePositionTable, backref="position"
     )
+
+
+class PositionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    ID: int
+
+    name: str
+
+    @staticmethod
+    def from_model(position: PositionModel) -> PositionOut:
+        return PositionOut.model_validate(position)
 
 
 class PaymentHistoryModel(Base):
@@ -187,3 +189,14 @@ class SystemMetadataOut(BaseModel):
     @staticmethod
     def from_model(system_metadata: SystemMetadataModel) -> SystemMetadataOut:
         return SystemMetadataOut.model_validate(system_metadata)
+
+
+class EmployeeOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    ID: int
+    full_name: str
+
+    @staticmethod
+    def from_model(employee: EmployeeModel) -> EmployeeOut:
+        return EmployeeOut.model_validate(employee)
