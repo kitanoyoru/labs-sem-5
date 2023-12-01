@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block title %}Position{% endblock %} {% block
+content %}
+<div class="h-100 d-flex align-items-center">
+  <main class="m-100 m-auto" style="max-width: 500px">
+    <form action="/api/v0/position" method="POST">
+      <legend class="text-center">Add position</legend>
+      <p>Add position with requested parameters</p>
+
+      <div class="mb-3">
+        <label for="name">Name:</label>
+        <input class="form-control" name="name" id="name" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="employee_name">Category ID:</label>
+        <input class="form-control" name="category_id" id="category_id" />
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+        Submit
+      </button>
+    </form>
+  </main>
+</div>
+{% endblock %}

@@ -305,6 +305,18 @@ class Service:
             categories=categories,
         )
 
+    async def save_position(
+        self,
+        admin: AdministratorModel,
+        name: str,
+        category_id: int,
+    ):
+        position = PositionModel(
+            name=name,
+            category_id=category_id,
+        )
+        return await self._database.save_position(position)
+
     async def patch_position(
         self,
         admin: AdministratorModel,

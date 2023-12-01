@@ -105,6 +105,12 @@ def create_router(
             "post/payment_history/index.html", {"request": request, "route": "home"}
         )
 
+    @router.get("/services/post/position", response_class=HTMLResponse)
+    def post_position_form(request: Request):
+        return templates.TemplateResponse(
+            "post/position/index.html", {"request": request, "route": "home"}
+        )
+
     @router.get("/services/delete/employee", response_class=HTMLResponse)
     def delete_employee_form(request: Request):
         return templates.TemplateResponse(

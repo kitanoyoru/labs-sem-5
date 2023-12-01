@@ -359,4 +359,34 @@ def create_router(
     ):
         return await service.get_system_metadata(administrator)
 
+    @router.post(
+        "/position",
+        name="Add position model",
+        response_class=ORJSONResponse,
+    )
+    async def add_position(
+        request: Request,
+        name: Annotated[
+            str,
+            Form(
+                title="Position name",
+                example="Developer",
+            ),
+        ],
+        category_id: Annotated[
+            int,
+            Form(
+                title="Category ID",
+                example="12",
+            ),
+        ],
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.save_position(
+            administrator,
+            name=name,
+            category_id=category_id,
+        )
+
     return router
