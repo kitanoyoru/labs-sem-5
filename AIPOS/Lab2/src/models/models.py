@@ -6,6 +6,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     Date,
     Float,
@@ -71,6 +72,7 @@ class EmployeeModel(Base):
     ID = Column(Integer, primary_key=True)
 
     full_name = Column(String)
+    is_trade_union_member = Column(Boolean, default=True)
 
     administrator_id = Column(Integer, ForeignKey("administrator.ID"))
     administrator = relationship("AdministratorModel", back_populates="employee")

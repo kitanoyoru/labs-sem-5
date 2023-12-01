@@ -283,13 +283,15 @@ def reset_database(database_url: str, data_path: str):
     config = create_alembic_config(engine)
 
     alembic.command.upgrade(config, "head")
-    alembic.command.revision(
-        config, autogenerate=True, message="Auto-generated migration"
-    )
+    # alembic.command.revision(
+    #    config, autogenerate=True, message="Auto-generated migration"
+    # )
     alembic.command.stamp(config, "base", purge=True)
 
+    """
     with engine.connect() as connection:
         with connection.begin():
             with open(data_path, "r") as file:
                 sql_statements = file.read()
                 connection.execute(text(sql_statements))
+    """

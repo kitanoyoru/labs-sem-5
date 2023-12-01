@@ -63,5 +63,5 @@ VALUES (1, 'January', 10000, 9000, 1000),
        (10, 'January', 8500, 8000, 500);
 
 INSERT INTO administrator (full_name, hashed_password)
-VALUES ('johndoe', 'EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW');
+VALUES ('johndoe', '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW');
 

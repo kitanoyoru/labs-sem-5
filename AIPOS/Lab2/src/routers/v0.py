@@ -9,6 +9,7 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 
 from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
+from src.shared.enums import MonthEnum
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import AdministratorModel, EmployeeOut, PaymentHistoryOut
 from src.service import SavePaymentHistoryDTO, Service
@@ -268,28 +269,10 @@ def create_router(
             ),
         ],
         month: Annotated[
-            str,
+            MonthEnum,
             Form(
                 title="Month",
                 example="January",
-            ),
-        ],
-        earnings: Annotated[
-            int,
-            Form(
-                title="Earnings",
-            ),
-        ],
-        payments: Annotated[
-            int,
-            Form(
-                title="Payments",
-            ),
-        ],
-        deductions: Annotated[
-            int,
-            Form(
-                title="Deductions",
             ),
         ],
         service: Service = Depends(get_service),
@@ -300,9 +283,6 @@ def create_router(
             employee_id,
             dto=SavePaymentHistoryDTO(
                 month=month,
-                earnings=earnings,
-                payments=payments,
-                deductions=deductions,
             ),
         )
 

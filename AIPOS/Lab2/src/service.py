@@ -29,11 +29,8 @@ from src.models.models import (
 from src.shared.enums import MonthEnum
 
 
-class SavePaymentHistoryDTO:
-    month: str
-    earnings: int
-    payments: int
-    deductions: int
+class SavePaymentHistoryDTO(BaseModel):
+    month: MonthEnum 
 
 
 class EmployeePaymentForMonthDTO(BaseModel):
@@ -173,12 +170,28 @@ class Service:
         if employee.administrator_id != admin.ID:
             raise AdministratorNotAllowedException(employee.ID)
 
+        system_metadata = await self._database.get_system_metadata()
+        positions = await self._database.get_employee_positions(employee_id)
+
+        payments = 0
+        for position in positions:
+            category = await self._database.get_position_category(position.ID)
+            payments += system_metadata.minimum_salary * category.coefficient
+
+        payments *= 1.15
+
+        deductions = 0.87 * payments + 0.01 * system_metadata.pension_contribution
+        if employee.is_trade_union_member:
+            deductions += 0.01 * system_metadata.trade_union_contribution
+
+        earnings = payments - deductions
+
         history = PaymentHistoryModel(
             employee_id=employee_id,
-            month=dto.month,
-            earnings=dto.earnings,
-            payments=dto.payments,
-            deductions=dto.deductions,
+            month=dto.month.value,
+            earnings=earnings,
+            payments=payments,
+            deductions=deductions,
         )
 
         return await self._database.save_history(history)

@@ -304,6 +304,52 @@ def create_router(
             {"request": request, "system_metadata": metadata, "route": "home"},
         )
 
-    return router
+    """
+    @router.post(
+        "/get_position",
+        name="Get position model",
+        description="Get position according to the specified query",
+        response_class=HTMLResponse,
+    )
+    async def get_position(
+        request: Request,
+        id: Annotated[
+            Optional[int],
+            Form(
+                title="Position id",
+                example="12",
+            ),
+        ] = None,
+        name: Annotated[
+            Optional[str],
+            Form(
+                title="Position name",
+                example="Ivan Prokopovich",
+            ),
+        ] = None,
+        employee_name: Annotated[
+            Optional[str],
+            Form(
+                title="Employee name",
+                example="Alex",
+            ),
+        ] = None,
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        try:
+            dtos: list[GetPositionDTO] = await service.get_position_by_criteria(
+                administrator,
+                filter=PositionFilter(ID=id, name=name, employee_name=employee_name),
+            )
+
+            return templates.TemplateResponse(
+                "functions/get_employee.html",
+                {"request": request, "dtos": dtos, "route": "home"},
+            )
+        except AdministratorNotAllowedException as exc:
+            return HTTPException(status_code=405, detail=str(exc))
+    """
 
     return router
+
