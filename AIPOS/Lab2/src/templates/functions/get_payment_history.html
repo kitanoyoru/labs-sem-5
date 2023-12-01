@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Categories{% endblock %} {% block
+content %}
+<div class="m-5 d-flex flex-column gap-5">
+  <div>
+    <h3 class="mb-5">Payment History</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Employee ID</th>
+          <th scope="col">Month</th>
+          <th scope="col">Earnings</th>
+          <th scope="col">Payments</th>
+          <th scope="col">Deductions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for history in histories %}
+        <tr>
+          <th scope="row">{{ history.ID }}</th>
+          <td>{{ history.employee_id }}</td>
+          <td>{{ history.month }}</td>
+          <td>{{ history.earnings }}</td>
+          <td>{{ history.payments }}</td>
+          <td>{{ history.deductions }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

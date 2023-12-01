@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Categories{% endblock %} {% block
+content %}
+<div class="m-5 d-flex flex-column gap-5">
+  <div>
+    <h3 class="mb-5">System metadata</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Trade Union Contribution</th>
+          <th scope="col">Income Tax</th>
+          <th scope="col">Minimum Salary</th>
+          <th scope="col">Pension Contribution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>{{ system_metadata.trade_union_contribution }}</td>
+          <td>{{ system_metadata.income_tax }}</td>
+          <td>{{ system_metadata.minimum_salary }}</td>
+          <td>{{ system_metadata.pension_contribution }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

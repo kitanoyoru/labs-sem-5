@@ -71,7 +71,7 @@ def create_app_with_config(engine: AsyncEngine) -> FastAPI:
     api_router = create_api_router(get_service)
     app.include_router(api_router, prefix="/api/v0", tags=["api"])
 
-    internal_router = create_internal_router(get_service)
+    internal_router = create_internal_router(get_service, templates)
     app.include_router(internal_router, prefix="/api/v0/functions", tags=["functions"])
 
     auth_router = create_auth_router(get_service)

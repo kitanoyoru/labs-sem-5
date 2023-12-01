@@ -111,12 +111,20 @@ def create_router(
                 example="Ivan Prokopovich",
             ),
         ],
+        position: Annotated[
+            str,
+            Form(
+                title="Employee position",
+                example="Developer",
+            ),
+        ],
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
         return await service.save_employee(
             administrator,
             full_name=full_name,
+            position=position,
         )
 
     @router.post(

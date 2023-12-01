@@ -2,7 +2,7 @@
 content %}
 <div class="h-100 d-flex align-items-center">
   <main class="m-100 m-auto" style="max-width: 500px">
-    <form action="/api/v0/get_employee" method="POST">
+    <form action="/api/v0/functions/get_employee" method="POST">
       <legend class="text-center">Get employee</legend>
       <p>Get employee by requested parameters</p>
 
@@ -14,6 +14,11 @@ content %}
       <div class="mb-3">
         <label for="full_name">Fullname:</label>
         <input class="form-control" name="full_name" id="full_name" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="position">Position:</label>
+        <input class="form-control" name="position" id="position" />
       </div>
 
       <button class="btn btn-primary w-100 py-2 mt-3" type="submit">

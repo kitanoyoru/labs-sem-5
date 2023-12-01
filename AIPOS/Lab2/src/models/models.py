@@ -87,6 +87,7 @@ class CategoryModel(Base):
 
     ID = Column(Integer, primary_key=True, autoincrement=True)
     coefficient = Column(Float, nullable=False)
+
     change_date = Column(Date, nullable=False, default=func.current_date())
 
     position = relationship("PositionModel", back_populates="category")
@@ -95,6 +96,7 @@ class CategoryModel(Base):
 class CategoryOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    ID: int
     coefficient: float
     change_date: datetime
 

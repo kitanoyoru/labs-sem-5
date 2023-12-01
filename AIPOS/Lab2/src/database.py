@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Tuple, TypeVar
+from typing import Optional, Tuple, TypeVar
 
 import alembic.command
 import sqlalchemy
@@ -32,6 +32,7 @@ class AdministratorFilter:
 class EmployeeFilter:
     ID: int | None = None
     full_name: str | None = None
+    position: str | None = None
 
 
 @dataclass
@@ -39,6 +40,9 @@ class PaymentHistoryFilter:
     ID: int | None = None
     employee_id: int | None = None
     month: MonthEnum | None = None
+    earnings: int | None = None
+    payments: int | None = None
+    deductions: int | None = None
 
     def __post_init__(self):
         if isinstance(self.month, str):
@@ -99,7 +103,8 @@ class Database:
 
         return await self.save_employee(employee)
 
-    async def save_employee(self, employee: EmployeeModel):
+    async def save_employee(self, employee: EmployeeModel, position: PositionModel):
+        employee.positions.append(position)
         self.session.add(employee)
         await self.session.commit()
 
@@ -116,14 +121,43 @@ class Database:
 
         await self.session.commit()
 
-    async def get_employee_positions(self, employee_id: int) -> list[EmployeeModel]:
+    async def get_employee_positions(
+        self, employee_id: int, filter: Optional[EmployeeFilter] = None
+    ) -> list[EmployeeModel]:
         stmt = (
             select(EmployeeModel)
             .where(EmployeeModel.ID == employee_id)
             .options(joinedload(EmployeeModel.positions))
         )
+
+        if filter is not None and filter.position is not None:
+            stmt = stmt.where(
+                EmployeeModel.positions.any(PositionModel.name == filter.position)
+            )
+
         employee = await self.session.scalar(stmt)
+        if employee is None:
+            return []
+
         return employee.positions
+
+    async def get_position_category(self, position_id: int) -> CategoryModel:
+        stmt = (
+            select(PositionModel)
+            .where(PositionModel.ID == position_id)
+            .options(joinedload(PositionModel.category))
+        )
+
+        position = await self.session.scalar(stmt)
+
+        return position.category
+
+    async def get_position_by_name(self, position_name: str) -> PositionModel:
+        stmt = select(PositionModel).where(PositionModel.name == position_name)
+
+        position = await self.session.scalar(stmt)
+
+        return position
 
     async def get_history(
         self, filter: PaymentHistoryFilter
@@ -138,6 +172,15 @@ class Database:
 
         if filter.month is not None:
             stmt = stmt.where(PaymentHistoryModel.month == filter.month.value)
+
+        if filter.earnings is not None:
+            stmt = stmt.where(PaymentHistoryModel.earnings == filter.earnings)
+
+        if filter.payments is not None:
+            stmt = stmt.where(PaymentHistoryModel.payments == filter.payments)
+
+        if filter.deductions is not None:
+            stmt = stmt.where(PaymentHistoryModel.deductions == filter.deductions)
 
         results = await self.session.scalars(stmt)
         items = list(results.all())

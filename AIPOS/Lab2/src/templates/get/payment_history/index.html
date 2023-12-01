@@ -2,7 +2,7 @@
 block content %}
 <div class="h-100 d-flex align-items-center">
   <main class="m-100 m-auto" style="max-width: 500px">
-    <form action="/api/v0/get_payment_history" method="POST">
+    <form action="/api/v0/functions/get_payment_history" method="POST">
       <legend class="text-center">Get payment history</legend>
       <p>Get payment history by requested parameters</p>
 
@@ -12,8 +12,28 @@ block content %}
       </div>
       <p></p>
       <div class="mb-3">
-        <label for="moth">Month:</label>
+        <label for="id">Employee ID:</label>
+        <input class="form-control" name="employee_id" id="employee_id" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="month">Month:</label>
         <input class="form-control" name="month" id="month" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="earnings">Earnings:</label>
+        <input class="form-control" name="earnings" id="earnings" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="payments">Payments:</label>
+        <input class="form-control" name="payments" id="payments" />
+      </div>
+      <p></p>
+      <div class="mb-3">
+        <label for="deductions">Deductions:</label>
+        <input class="form-control" name="deductions" id="deductions" />
       </div>
 
       <button class="btn btn-primary w-100 py-2 mt-3" type="submit">

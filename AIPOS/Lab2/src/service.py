@@ -39,13 +39,21 @@ class SavePaymentHistoryDTO:
 class EmployeePaymentForMonthDTO(BaseModel):
     employee: EmployeeOut
     positions: list[PositionOut]
+    categories: dict[int, CategoryOut]
     payment_histories: list[PaymentHistoryOut]
+
+
+class GetEmployeeDTO(BaseModel):
+    employee: EmployeeOut
+    positions: list[PositionOut]
+    categories: dict[int, CategoryOut]
 
 
 class MinEmployeeSalaryDTO(BaseModel):
     employee: EmployeeOut
     positions: list[PositionOut]
     payment_histories: list[PaymentHistoryOut]
+    categories: dict[int, CategoryOut]
 
 
 class Service:
@@ -70,13 +78,17 @@ class Service:
         result = await self._database.get_administrator(filter)
         return [AdministratorOut.from_model(model) for model in result]
 
-    async def save_employee(self, admin: AdministratorModel, full_name: str):
+    async def save_employee(
+        self, admin: AdministratorModel, full_name: str, position: str
+    ):
         employee = EmployeeModel(
             full_name=full_name,
             administrator_id=admin.ID,
         )
 
-        return await self._database.save_employee(employee)
+        position = await self._database.get_position_by_name(position)
+
+        return await self._database.save_employee(employee, position)
 
     async def assign_position_to_employee(
         self,
@@ -94,14 +106,38 @@ class Service:
 
     async def get_employee_by_criteria(
         self, admin: AdministratorModel, filter: EmployeeFilter
-    ) -> list[EmployeeOut]:
-        result = await self._database.get_employee(filter)
+    ) -> list[GetEmployeeDTO]:
+        employees = await self._database.get_employee(filter)
 
-        for employee in result:
+        for employee in employees:
             if employee.administrator_id != admin.ID:
                 raise AdministratorNotAllowedException(employee.ID)
 
-        return [EmployeeOut.from_model(model) for model in result]
+        result: list[GetEmployeeDTO] = []
+        for employee in employees:
+            positions = [
+                PositionOut.from_model(model)
+                for model in await self._database.get_employee_positions(
+                    employee.ID, filter
+                )
+            ]
+            if len(positions) == 0:
+                continue
+
+            categories: dict[int, CategoryOut] = {}
+            for position in positions:
+                category = await self._database.get_position_category(position.ID)
+                categories[position.ID] = CategoryOut.from_model(category)
+
+            result.append(
+                GetEmployeeDTO(
+                    employee=EmployeeOut.from_model(employee),
+                    positions=positions,
+                    categories=categories,
+                )
+            )
+
+        return result
 
     async def delete_employee(self, filter: EmployeeFilter):
         return await self._database.delete_employee(filter)
@@ -175,6 +211,12 @@ class Service:
                 PositionOut.from_model(model)
                 for model in await self._database.get_employee_positions(employee.ID)
             ]
+
+            categories: dict[int, CategoryOut] = {}
+            for position in positions:
+                category = await self._database.get_position_category(position.ID)
+                categories[position.ID] = CategoryOut.from_model(category)
+
             histories = [
                 PaymentHistoryOut.from_model(model)
                 for model in await self._database.get_history(
@@ -186,6 +228,7 @@ class Service:
                 MinEmployeeSalaryDTO(
                     employee=empl_out,
                     positions=positions,
+                    categories=categories,
                     payment_histories=histories,
                 )
             )
@@ -193,7 +236,7 @@ class Service:
         return result
 
     async def get_employee_payment_for_month(
-            self, admin: AdministratorModel, employee_id, month: MonthEnum
+        self, admin: AdministratorModel, employee_id, month: MonthEnum
     ) -> EmployeePaymentForMonthDTO:
         employee = await self._database._get_employee_by_id(employee_id)
         if employee.administrator_id != admin.ID:
@@ -205,6 +248,12 @@ class Service:
             PositionOut.from_model(model)
             for model in await self._database.get_employee_positions(employee.ID)
         ]
+
+        categories: dict[int, CategoryOut] = {}
+        for position in positions:
+            category = await self._database.get_position_category(position.ID)
+            categories[position.ID] = CategoryOut.from_model(category)
+
         histories = [
             PaymentHistoryOut.from_model(model)
             for model in await self._database.get_history(
@@ -215,5 +264,6 @@ class Service:
         return EmployeePaymentForMonthDTO(
             employee=empl_out,
             positions=positions,
+            categories=categories,
             payment_histories=histories,
         )

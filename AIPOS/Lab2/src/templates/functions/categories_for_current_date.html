@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Categories{% endblock %} {% block
+content %}
+<div class="m-5 d-flex flex-column gap-5">
+  <h3>Categories for the date: {{ now }}</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Coefficient</th>
+        <th scope="col">Change Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+      <tr>
+        <th scope="row">{{ category.ID }}</th>
+        <td>{{ category.coefficient }}</td>
+        <td>{{ category.change_date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

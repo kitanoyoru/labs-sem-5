@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block title %}Categories{% endblock %} {% block
+content %}
+<div class="m-5 d-flex flex-column gap-5">
+  <h3>General</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Full Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">{{ dto.employee.ID }}</th>
+        <td>{{ dto.employee.full_name }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Positions</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Coefficient</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for position in dto.positions %}
+      <tr>
+        <th scope="row">{{ position.ID }}</th>
+        <td>{{ position.name }}</td>
+        <td>{{ dto.categories[position.ID].coefficient }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h3>Payments</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Month</th>
+        <th scope="col">Earnings</th>
+        <th scope="col">Payments</th>
+        <th scope="col">Deductions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for payment in dto.payment_histories %}
+      <tr>
+        <th scope="row">{{ payment.ID }}</th>
+        <td>{{ payment.month }}</td>
+        <td>{{ payment.earnings }}</td>
+        <td>{{ payment.payments }}</td>
+        <td>{{ payment.deductions }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
