@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}Position{% endblock %} {% block
+content %}
+<div class="h-100 d-flex align-items-center">
+  <main class="m-100 m-auto" style="max-width: 500px">
+    <form action="/api/v0/delete_position" method="POST">
+      <input type="hidden" name="_method" value="DELETE" />
+      <legend class="text-center">Delete employee</legend>
+      <p>Delete employee by requested parameters</p>
+
+      <div class="mb-3">
+        <label for="id">ID:</label>
+        <input class="form-control" name="id" id="id" />
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 mt-3" type="submit">
+        Submit
+      </button>
+    </form>
+  </main>
+</div>
+{% endblock %}

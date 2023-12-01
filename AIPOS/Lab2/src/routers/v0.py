@@ -8,7 +8,12 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
 
-from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
+from src.database import (
+    AdministratorFilter,
+    EmployeeFilter,
+    PaymentHistoryFilter,
+    PositionFilter,
+)
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import AdministratorModel, EmployeeOut, PaymentHistoryOut
 from src.service import SavePaymentHistoryDTO, Service
@@ -387,6 +392,29 @@ def create_router(
             administrator,
             name=name,
             category_id=category_id,
+        )
+
+    @router.post(
+        "/delete_position",
+        name="Delete position model",
+        response_class=ORJSONResponse,
+    )
+    async def delete_position(
+        request: Request,
+        id: Annotated[
+            int,
+            Form(
+                title="Position id",
+                example="12",
+            ),
+        ],
+        service: Service = Depends(get_service),
+        current_user: AdministratorModel = Depends(get_current_user),
+    ):
+        return await service.delete_position(
+            filter=PositionFilter(
+                ID=id,
+            )
         )
 
     return router

@@ -286,6 +286,14 @@ class Database:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)
         return await self.session.scalar(stmt)
 
+    async def delete_position(self, filter: PositionFilter):
+        models = await self.get_position(filter)
+
+        for model in models:
+            await self.session.delete(model)
+
+        await self.session.commit()
+
 
 T = TypeVar("T")
 

@@ -333,3 +333,6 @@ class Service:
         """
 
         return await self._database.patch_position(id, name, category_id)
+
+    async def delete_position(self, admin: AdministratorModel, filter: PositionFilter):
+        return await self._database.delete_position(filter)
