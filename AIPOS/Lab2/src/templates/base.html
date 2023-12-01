@@ -69,6 +69,13 @@
                     >System Metadata</a
                   >
                 </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'get-position' %}active{% endif %}"
+                    href="/services/get/position"
+                    >Position</a
+                  >
+                </li>
               </ul>
             </li>
 
@@ -141,9 +148,16 @@
               <ul class="dropdown-menu">
                 <li>
                   <a
-                    class="dropdown-item {% if route == 'json-converter' %}active{% endif %}"
+                    class="dropdown-item {% if route == 'patch-employee' %}active{% endif %}"
                     href="/services/patch/employee"
                     >Employee</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item {% if route == 'patch-position' %}active{% endif %}"
+                    href="/services/patch/position"
+                    >Position</a
                   >
                 </li>
               </ul>

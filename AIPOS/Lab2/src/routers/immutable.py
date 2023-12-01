@@ -87,6 +87,12 @@ def create_router(
             "get/system_metadata/index.html", {"request": request, "route": "home"}
         )
 
+    @router.get("/services/get/position", response_class=HTMLResponse)
+    def get_position_form(request: Request):
+        return templates.TemplateResponse(
+            "get/position/index.html", {"request": request, "route": "home"}
+        )
+
     @router.get("/services/post/employee", response_class=HTMLResponse)
     def post_employee_form(request: Request):
         return templates.TemplateResponse(
@@ -115,6 +121,12 @@ def create_router(
     def patch_payment_history_form(request: Request):
         return templates.TemplateResponse(
             "patch/employee/index.html", {"request": request, "route": "home"}
+        )
+
+    @router.get("/services/patch/position", response_class=HTMLResponse)
+    def patch_position_form(request: Request):
+        return templates.TemplateResponse(
+            "patch/position/index.html", {"request": request, "route": "home"}
         )
 
     return router

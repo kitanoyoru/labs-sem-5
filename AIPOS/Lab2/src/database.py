@@ -35,6 +35,13 @@ class EmployeeFilter:
     position: str | None = None
 
 
+@dataclass(frozen=True)
+class PositionFilter:
+    ID: int | None = None
+    name: str | None = None
+    employee_name: str | None = None
+
+
 @dataclass
 class PaymentHistoryFilter:
     ID: int | None = None
@@ -235,6 +242,45 @@ class Database:
         rows = result.fetchall()
 
         return [row[0] for row in rows]
+
+    async def get_position(self, filter: PositionFilter) -> list[PositionModel]:
+        stmt = select(PositionModel).options(joinedload(PositionModel.employees))
+
+        if filter.ID is not None:
+            stmt = stmt.where(PositionModel.ID == filter.ID)
+
+        if filter.name is not None:
+            stmt = stmt.where(PositionModel.name == filter.name)
+
+        if filter.employee_name is not None:
+            stmt = stmt.where(
+                PositionModel.positions.any(EmployeeModel.name == filter.employee_name)
+            )
+
+        results = await self.session.scalars(stmt)
+        items = list(results.unique())
+
+        return items
+
+    async def patch_position(
+        self, id: int, name: Optional[str] = None, category_id: Optional[str] = None
+    ):
+        result = await self.get_position(filter=PositionFilter(ID=id))
+        assert len(result) == 1
+
+        position = result[0]
+
+        if name is not None:
+            position.name = name
+
+        if category_id is not None:
+            position.category_id = category_id
+
+        return await self.save_position(position)
+
+    async def save_position(self, position: PositionModel):
+        self.session.add(position)
+        await self.session.commit()
 
     async def _get_employee_by_id(self, id: int) -> EmployeeModel:
         stmt = select(EmployeeModel).where(EmployeeModel.ID == id)

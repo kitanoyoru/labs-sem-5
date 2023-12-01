@@ -10,18 +10,25 @@ from fastapi.templating import Jinja2Templates
 from jose import JWTError, jwt
 from pydantic import BaseModel
 
-from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
+from src.database import (
+    AdministratorFilter,
+    EmployeeFilter,
+    PaymentHistoryFilter,
+    PositionFilter,
+)
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import (
     AdministratorModel,
     CategoryOut,
     EmployeeOut,
     PaymentHistoryOut,
+    PositionOut,
     SystemMetadataOut,
 )
 from src.service import (
     EmployeePaymentForMonthDTO,
     GetEmployeeDTO,
+    GetPositionDTO,
     MinEmployeeSalaryDTO,
     Service,
 )
@@ -304,7 +311,6 @@ def create_router(
             {"request": request, "system_metadata": metadata, "route": "home"},
         )
 
-    """
     @router.post(
         "/get_position",
         name="Get position model",
@@ -338,18 +344,16 @@ def create_router(
         administrator: AdministratorModel = Depends(get_current_user),
     ):
         try:
-            dtos: list[GetPositionDTO] = await service.get_position_by_criteria(
+            dto: GetPositionDTO = await service.get_position_by_criteria(
                 administrator,
                 filter=PositionFilter(ID=id, name=name, employee_name=employee_name),
             )
 
             return templates.TemplateResponse(
-                "functions/get_employee.html",
-                {"request": request, "dtos": dtos, "route": "home"},
+                "functions/get_position.html",
+                {"request": request, "dto": dto, "route": "home"},
             )
         except AdministratorNotAllowedException as exc:
             return HTTPException(status_code=405, detail=str(exc))
-    """
 
     return router
-

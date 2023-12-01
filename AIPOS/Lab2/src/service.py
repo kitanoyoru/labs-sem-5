@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import Optional
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -12,6 +13,7 @@ from src.database import (
     Database,
     EmployeeFilter,
     PaymentHistoryFilter,
+    PositionFilter,
 )
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import (
@@ -30,7 +32,7 @@ from src.shared.enums import MonthEnum
 
 
 class SavePaymentHistoryDTO(BaseModel):
-    month: MonthEnum 
+    month: MonthEnum
 
 
 class EmployeePaymentForMonthDTO(BaseModel):
@@ -42,6 +44,11 @@ class EmployeePaymentForMonthDTO(BaseModel):
 
 class GetEmployeeDTO(BaseModel):
     employee: EmployeeOut
+    positions: list[PositionOut]
+    categories: dict[int, CategoryOut]
+
+
+class GetPositionDTO(BaseModel):
     positions: list[PositionOut]
     categories: dict[int, CategoryOut]
 
@@ -280,3 +287,37 @@ class Service:
             categories=categories,
             payment_histories=histories,
         )
+
+    async def get_position_by_criteria(
+        self,
+        admin: AdministratorModel,
+        filter: PositionFilter,
+    ) -> GetPositionDTO:
+        positions = await self._database.get_position(filter)
+
+        categories: dict[int, CategoryOut] = {}
+        for position in positions:
+            category = await self._database.get_position_category(position.ID)
+            categories[position.ID] = CategoryOut.from_model(category)
+
+        return GetPositionDTO(
+            positions=positions,
+            categories=categories,
+        )
+
+    async def patch_position(
+        self,
+        admin: AdministratorModel,
+        id: int,
+        name: Optional[str] = None,
+        category_id: Optional[int] = None,
+    ):
+        result = await self._database.get_position(filter=PositionFilter(ID=id))
+
+        """
+        for position in result:
+            if position.employees.any(EmployeeModel.administrator_id != admin.ID):
+                raise AdministratorNotAllowedException()
+        """
+
+        return await self._database.patch_position(id, name, category_id)

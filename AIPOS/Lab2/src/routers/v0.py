@@ -9,10 +9,10 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 
 from src.database import AdministratorFilter, EmployeeFilter, PaymentHistoryFilter
-from src.shared.enums import MonthEnum
 from src.exceptions import AdministratorNotAllowedException
 from src.models.models import AdministratorModel, EmployeeOut, PaymentHistoryOut
 from src.service import SavePaymentHistoryDTO, Service
+from src.shared.enums import MonthEnum
 
 logger = logging.getLogger(__file__)
 
@@ -155,6 +155,44 @@ def create_router(
         try:
             return await service.patch_employee(
                 administrator, id=id, full_name=full_name
+            )
+        except AdministratorNotAllowedException as exc:
+            return HTTPException(status_code=405, detail=str(exc))
+
+    @router.post(
+        "/patch_position",
+        name="Patch position model",
+        response_class=ORJSONResponse,
+    )
+    async def patch_employee(
+        request: Request,
+        id: Annotated[
+            int,
+            Form(
+                title="Employee id",
+                example="12",
+            ),
+        ],
+        name: Annotated[
+            str | None,
+            Form(
+                title="Position name",
+                example="Developer",
+            ),
+        ] = None,
+        category_id: Annotated[
+            int | None,
+            Form(
+                title="Category id",
+                example="12",
+            ),
+        ] = None,
+        service: Service = Depends(get_service),
+        administrator: AdministratorModel = Depends(get_current_user),
+    ):
+        try:
+            return await service.patch_position(
+                administrator, id=id, name=name, category_id=category_id
             )
         except AdministratorNotAllowedException as exc:
             return HTTPException(status_code=405, detail=str(exc))
