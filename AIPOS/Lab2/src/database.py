@@ -116,11 +116,21 @@ class Database:
         await self.session.commit()
 
     async def assign_position_to_employee(self, employee_id: int, position_id: int):
-        employee = await self.session.get(EmployeeModel, employee_id)
+        stmt = (
+            select(EmployeeModel)
+            .where(EmployeeModel.ID == employee_id)
+            .options(joinedload(EmployeeModel.positions))
+        )
+        employee = await self.session.scalar(stmt)
         if not employee:
             raise EmployeeNotFoundException(employee_id)
 
-        position = await self.session.get(PositionModel, position_id)
+        stmt = (
+            select(PositionModel)
+            .where(PositionModel.ID == position_id)
+            .options(joinedload(PositionModel.employees))
+        )
+        position = await self.session.scalar(stmt)
         if not position:
             raise PositionNotFoundException(position_id)
 
@@ -254,7 +264,7 @@ class Database:
 
         if filter.employee_name is not None:
             stmt = stmt.where(
-                PositionModel.positions.any(EmployeeModel.name == filter.employee_name)
+                PositionModel.employees.any(EmployeeModel.full_name == filter.employee_name)
             )
 
         results = await self.session.scalars(stmt)

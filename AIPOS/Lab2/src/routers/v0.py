@@ -124,6 +124,12 @@ def create_router(
                 example="Developer",
             ),
         ],
+        is_trade_union_member: Annotated[
+            bool,
+            Form(
+                title="Trade Union Member",
+            ),
+        ] = False,
         service: Service = Depends(get_service),
         administrator: AdministratorModel = Depends(get_current_user),
     ):
@@ -131,6 +137,7 @@ def create_router(
             administrator,
             full_name=full_name,
             position=position,
+            is_trade_union_member=is_trade_union_member,
         )
 
     @router.post(

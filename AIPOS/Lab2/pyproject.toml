@@ -23,6 +23,7 @@ python-multipart = "^0.0.6"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 fastapi-sessions = "^0.3.2"
+requests = "^2.31.0"
 
 
 [tool.poetry.group.dev.dependencies]

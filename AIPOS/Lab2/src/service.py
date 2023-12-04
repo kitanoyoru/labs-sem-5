@@ -83,11 +83,12 @@ class Service:
         return [AdministratorOut.from_model(model) for model in result]
 
     async def save_employee(
-        self, admin: AdministratorModel, full_name: str, position: str
+            self, admin: AdministratorModel, full_name: str, position: str, is_trade_union_member: bool,
     ):
         employee = EmployeeModel(
             full_name=full_name,
             administrator_id=admin.ID,
+            is_trade_union_member=is_trade_union_member,
         )
 
         position = await self._database.get_position_by_name(position)
@@ -187,7 +188,7 @@ class Service:
 
         payments *= 1.15
 
-        deductions = 0.87 * payments + 0.01 * system_metadata.pension_contribution
+        deductions = 0.13 * payments + 0.01 * system_metadata.pension_contribution
         if employee.is_trade_union_member:
             deductions += 0.01 * system_metadata.trade_union_contribution
 
