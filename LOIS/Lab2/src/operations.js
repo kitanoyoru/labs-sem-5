@@ -59,11 +59,12 @@ const intersectionLine = (line1, line2) => {
   for (const cond1 of line1) {
     for (const cond2 of line2) {
       const newCond = intersectionCond(cond1, cond2);
-      if (newCond) {
+      if (newCond.length > 0) {
         line.push(newCond);
       }
     }
   }
+
   return line;
 };
 
@@ -72,17 +73,10 @@ const intersectionCond = (cond1, cond2) => {
     return [];
   } else {
     const cond2values = Object.values(cond2);
-    const answ = Object.values(cond1).map((first, i) => {
-        if (!cond2values[i]) {
-            return "filter"
-        }
-        const v = intersection(first, cond2values[i])
-        return v
-    });
-    if (!answ.includes("filter")) {
-        console.log(answ)
-        return answ.includes(null) ? [] : answ;
-    } 
+    const data = Object.values(cond1).map((first, i) => [first, cond2values[i]])
+    const answ = Object.values(cond1).map((first, i) => intersection(first, cond2values[i]));
+
+    return answ.includes(null) ? [] : answ;
   }
 };
 
